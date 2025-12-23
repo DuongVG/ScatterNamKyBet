@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NamKyBet Scatter v2.08</title>
+    <style>
+        /* --- 1. CẤU HÌNH --- */
+        :root {
+            --bg: #050505;
+            --panel: #111;
+            --gold: #ffd700;
+            --fire: #ff4500;
+            --text: #fff;
+        }
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0; background-color: var(--bg); color: var(--text);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+            /* Nền lưới Cyberpunk mờ */
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)),
+                repeating-linear-gradient(0deg, transparent, transparent 19px, #222 20px),
+                repeating-linear-gradient(90deg, transparent, transparent 19px, #222 20px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+        }
+
+        #fx-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+        
+        /* CONTAINER CHÍNH */
+        #ui-layer { 
+            position: relative; z-index: 60; height: 100%; width: 100%; 
+            max-width: 500px; margin: 0 auto; 
+            display: flex; flex-direction: column;
+        }
+
+        /* --- 2. ANIMATION RGB --- */
+        @keyframes rgb-border {
+            0% { border-color: #f00; box-shadow: 0 0 15px #f00; }
+            15% { border-color: #f0f; box-shadow: 0 0 15px #f0f; }
+            30% { border-color: #00f; box-shadow: 0 0 15px #00f; }
+            45% { border-color: #0ff; box-shadow: 0 0 15px #0ff; }
+            60% { border-color: #0f0; box-shadow: 0 0 15px #0f0; }
+            75% { border-color: #ff0; box-shadow: 0 0 15px #ff0; }
+            100% { border-color: #f00; box-shadow: 0 0 15px #f00; }
+        }
+
+        @keyframes rgb-bg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes text-glow {
+            0% { text-shadow: 0 0 5px #fff, 0 0 10px #f0f; }
+            50% { text-shadow: 0 0 10px #fff, 0 0 20px #0ff; }
+            100% { text-shadow: 0 0 5px #fff, 0 0 10px #f0f; }
+        }
+
+        /* --- 3. HEADER --- */
+        .header {
+            flex-shrink: 0; height: 70px; padding: 0 15px;
+            background: rgba(15, 15, 15, 0.95); border-bottom: 2px solid #333;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo-wrap { display: flex; flex-direction: column; justify-content: center; }
+        .logo { 
+            font-weight: 900; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;
+            /* RGB TEXT */
+            background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+            background-size: 400%; -webkit-background-clip: text; color: transparent;
+            animation: rgb-bg 3s linear infinite;
+            filter: drop-shadow(0 0 2px rgba(255,255,255,0.3));
+        }
+        .sub-logo { font-size: 0.65rem; color: #fff; font-weight: 700; margin-top: 3px; letter-spacing: 1px; opacity: 0.7; }
+        
+        .bal-box { 
+            font-family: monospace; font-size: 1.1rem; color: var(--gold); 
+            border: 1px solid #444; padding: 5px 12px; border-radius: 6px; background: #000;
+            box-shadow: 0 0 5px var(--gold);
+        }
+
+        /* --- 4. MÁY QUAY (TỶ LỆ 5:3.5 + RGB BORDER) --- */
+        .game-area {
+            flex: 1; display: flex; justify-content: center; align-items: center;
+            padding: 15px; width: 100%; overflow: hidden;
+        }
+        
+        .machine-container {
+            width: 100%;
+            aspect-ratio: 5/3.5; /* TỶ LỆ CHUẨN */
+            background: #000; border: 3px solid #fff; border-radius: 15px;
+            padding: 5px; position: relative;
+            /* RGB CHẠY QUANH VIỀN */
+            animation: rgb-border 4s linear infinite; 
+            transition: 0.3s;
+        }
+        
+        /* Khi Free Spin: Viền vàng lửa */
+        .machine-container.fs-active {
+            animation: none; border-color: var(--gold); 
+            box-shadow: 0 0 50px var(--gold), inset 0 0 20px var(--gold);
+        }
+
+        .machine {
+            width: 100%; height: 100%;
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px;
+            background: #111; overflow: hidden; border-radius: 10px;
+        }
+        
+        .col { 
+            background: linear-gradient(180deg, #050505, #1a1a1a, #050505); 
+            display: flex; flex-direction: column; height: 100%; 
+            border-right: 1px solid #222;
+        }
+        .col:last-child { border: none; }
+        .col.blur .symbol { filter: blur(3px); opacity: 0.6; transform: scaleY(1.3); }
+
+        .symbol {
+            flex: 1; display: flex; justify-content: center; align-items: center;
+            font-size: clamp(1.5rem, 5vw, 2.5rem); 
+            border-bottom: 1px solid #222;
+        }
+
+        .symbol.scatter { 
+            font-size: clamp(2rem, 6vw, 3rem); 
+            filter: drop-shadow(0 0 10px var(--gold)); z-index: 5; 
+            animation: pop 0.6s infinite alternate; 
+        }
+        @keyframes pop { from{transform:scale(1)} to{transform:scale(1.2)} }
+
+        /* --- 5. FOOTER --- */
+        .footer { width: 100%; background: #111; border-top: 1px solid #333; padding-bottom: 10px; flex-shrink: 0; }
+        
+        .info {
+            text-align: center; padding: 10px; font-weight: 900; color: #fff; 
+            font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;
+            background: #151515; border-bottom: 1px solid #333; margin-bottom: 10px;
+        }
+        .info.fs-mode { color: var(--gold); text-shadow: 0 0 15px var(--gold); animation: text-glow 1s infinite; }
+
+        .controls {
+            padding: 0 15px; display: grid; grid-template-columns: 100px 1fr; gap: 10px;
+        }
+        
+        .bet-col { display: flex; flex-direction: column; gap: 5px; }
+        input { 
+            width: 100%; padding: 10px; background: #000; color: var(--gold); 
+            border: 1px solid #444; text-align: center; font-weight: bold; font-size: 1.1rem; border-radius: 6px; 
+        }
+        .quick-row { display: flex; gap: 2px; }
+        .q-btn { 
+            flex: 1; background: #222; color: #aaa; border: 1px solid #444; 
+            padding: 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;
+        }
+        .q-btn:active { background: #fff; color: #000; }
+        
+        .spin-row { display: flex; gap: 8px; height: 100%; }
+        
+        /* NÚT QUAY RGB (CHẠY MÀU) */
+        #btn-spin {
+            flex: 2; border: none; border-radius: 10px; color: #fff; font-size: 1.4rem; font-weight: 900;
+            text-transform: uppercase; cursor: pointer;
+            /* Gradient RGB chạy */
+            background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+            background-size: 400%; animation: rgb-bg 3s linear infinite;
+            box-shadow: 0 5px 0 #333; text-shadow: 0 2px 2px rgba(0,0,0,0.5);
+            transition: transform 0.1s;
+        }
+        #btn-spin:active { transform: translateY(4px); box-shadow: 0 1px 0 #333; }
+        #btn-spin.disabled { 
+            filter: grayscale(1); pointer-events: none; transform: translateY(4px); 
+            box-shadow: none; animation: none; background: #333; 
+        }
+
+        /* NÚT FREE SPIN (VÀNG LỬA) */
+        #btn-spin.fs-btn {
+            background: linear-gradient(180deg, #ffd700, #ff8c00, #ff4500);
+            color: #fff; text-shadow: 0 2px 0 #8b0000;
+            box-shadow: 0 5px 0 #8b0000, 0 0 20px var(--gold);
+            animation: pulse-fire 0.8s infinite alternate;
+        }
+        @keyframes pulse-fire { 
+            from { transform: scale(1); box-shadow: 0 5px 0 #8b0000, 0 0 10px var(--gold); } 
+            to { transform: scale(1.03); box-shadow: 0 5px 0 #8b0000, 0 0 30px var(--fire); } 
+        }
+
+        #btn-auto {
+            flex: 1; background: #00b0ff; color: #fff; border: none; border-radius: 10px; font-weight: bold;
+            box-shadow: 0 5px 0 #006080;
+        }
+        #btn-auto.active { background: #ff3333; box-shadow: 0 5px 0 #990000; animation: pulse-red 1s infinite; }
+        @keyframes pulse-red { 50% { opacity: 0.7; } }
+
+        /* --- 6. OVERLAYS --- */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 1000; display: none;
+            flex-direction: column; justify-content: center; align-items: center;
+        }
+        .win-title { font-size: 3.5rem; color: var(--gold); font-weight: 900; animation: zoom 0.5s; text-align: center; text-shadow: 0 0 30px var(--gold); }
+        .win-amt { font-size: 3rem; color: #fff; font-weight: bold; margin-top: 10px; }
+        @keyframes zoom { from{transform:scale(0)} to{transform:scale(1)} }
+        
+        .hidden-trigger { position: absolute; top:0; right:0; width: 60px; height: 70px; z-index: 100; opacity: 0; }
+        
+        /* Reset Popup */
+        .reset-box { text-align: center; }
+        .reset-btn { 
+            margin-top: 20px; padding: 12px 25px; font-size: 1.2rem; font-weight: bold; 
+            background: var(--fire); color: #fff; border: none; border-radius: 8px;
+            box-shadow: 0 0 20px var(--fire); animation: pulse-fire 1s infinite;
+        }
+
+        /* Admin */
+        .admin-box { width: 80%; background: #222; border: 2px solid #fff; padding: 20px; border-radius: 10px; text-align: center; }
+        .adm-inp { width: 100%; padding: 10px; margin: 10px 0; background: #000; color: #fff; border: 1px solid #555; text-align: center; }
+        .adm-btn { width: 100%; padding: 10px; background: #fff; color: #000; font-weight: bold; border: none; margin-top: 5px; }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="fx-canvas"></canvas>
+
+    <div id="ui-layer">
+        <div class="header">
+            <div class="logo-wrap">
+                <div class="logo">NAMKYBET.VIP59Y2</div>
+                <div class="sub-logo">SCATTER v2.08</div>
+            </div>
+            <div class="bal-box"><span id="balance">1000</span></div>
+            <div class="hidden-trigger" id="btn-tnd"></div>
+        </div>
+
+        <div class="game-area">
+            <div class="machine-container" id="border">
+                <div class="machine" id="machine">
+                    <div class="col" id="c0"></div>
+                    <div class="col" id="c1"></div>
+                    <div class="col" id="c2"></div>
+                    <div class="col" id="c3"></div>
+                    <div class="col" id="c4"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="info" id="msg">SẴN SÀNG QUAY!</div>
+            <div class="controls">
+                <div class="bet-col">
+                    <input type="number" id="bet" value="10">
+                    <div class="quick-row">
+                        <button class="q-btn" data-val="-10">-10</button>
+                        <button class="q-btn" data-val="10">+10</button>
+                        <button class="q-btn" data-val="50">+50</button>
+                    </div>
+                </div>
+                <div class="spin-row">
+                    <button id="btn-spin">QUAY</button>
+                    <button id="btn-auto">AUTO</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="win-ol">
+        <div class="win-title" id="win-title">BIG WIN!</div>
+        <div class="win-amt" id="win-amt">0</div>
+        <div style="color:#aaa; margin-top:20px; font-size:0.8rem;">CHẠM ĐỂ THU TIỀN</div>
+    </div>
+
+    <div class="overlay" id="reset-ol">
+        <div class="reset-box">
+            <div class="win-title" style="color:var(--fire); font-size:2.5rem;">CHÁY TÚI!</div>
+            <div style="color:#fff; margin-top:10px;">Hết tiền rồi đại gia ơi...</div>
+            <button class="reset-btn" id="btn-reset">HỒI MÁU (1.000)</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="adm-ol">
+        <div class="admin-box">
+            <h3 style="color:gold; margin-top:0;">GOD MODE</h3>
+            <input type="number" class="adm-inp" id="adm-bal" placeholder="Set Số dư">
+            <input type="number" class="adm-inp" id="adm-force" placeholder="Force Scatter (0-5)">
+            <button class="adm-btn" id="btn-save-admin">LƯU</button>
+            <button class="adm-btn" style="background:#444; color:#fff;" id="btn-close-admin">ĐÓNG</button>
+        </div>
+    </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    
+    // 1. CONFIG
+    const ICONS = ['💎','7️⃣','🔔','🍉','🍇','🍋','🍒','🚀']; 
+    const SCAT = '🚀';
+    
+    let state = {
+        bal: 1000, bet: 10, isSpin: false, isAuto: false,
+        fsActive: false, fsLeft: 0, fsAccum: 0, force: -1
+    };
+
+    let audioCtx = null;
+    let coins = [];
+    let fxCtx = document.getElementById('fx-canvas').getContext('2d');
+
+    // 2. INIT
+    function init() {
+        document.getElementById('fx-canvas').width = window.innerWidth;
+        document.getElementById('fx-canvas').height = window.innerHeight;
+        
+        let saved = localStorage.getItem('nk_scat_v208_final');
+        if(saved) state.bal = parseFloat(saved);
+        
+        renderBal();
+        for(let i=0; i<5; i++) renderStaticCol(i, true);
+        
+        requestAnimationFrame(renderLoop);
+        
+        // EVENTS
+        document.getElementById('btn-spin').addEventListener('click', spinClick);
+        document.getElementById('btn-auto').addEventListener('click', autoClick);
+        
+        document.querySelectorAll('.q-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                add(parseInt(this.getAttribute('data-val')));
+            });
+        });
+
+        document.getElementById('win-ol').addEventListener('click', closeWin);
+        document.getElementById('btn-tnd').addEventListener('click', askAdmin);
+        document.getElementById('btn-save-admin').addEventListener('click', saveAdmin);
+        document.getElementById('btn-close-admin').addEventListener('click', () => { document.getElementById('adm-ol').style.display = 'none'; });
+        document.getElementById('btn-reset').addEventListener('click', resetMoney);
+    }
+
+    // 3. UI
+    function add(n) {
+        if(state.isSpin || state.fsActive) return;
+        let v = parseInt(document.getElementById('bet').value) + n;
+        if(v<1) v=1;
+        document.getElementById('bet').value = v;
+    }
+
+    function renderBal() {
+        document.getElementById('balance').innerText = state.bal.toLocaleString();
+        localStorage.setItem('nk_scat_v208_final', state.bal);
+    }
+
+    function msg(t) { document.getElementById('msg').innerText = t; }
+
+    function resetMoney() {
+        state.bal = 1000; renderBal();
+        document.getElementById('reset-ol').style.display = 'none';
+        snd('win-small');
+    }
+
+    function setFSMode(active) {
+        state.fsActive = active;
+        const border = document.getElementById('border'); // .machine-container
+        const info = document.getElementById('msg');
+        const btn = document.getElementById('btn-spin');
+        const autoBtn = document.getElementById('btn-auto');
+        
+        if(active) {
+            border.classList.add('fs-active');
+            info.classList.add('fs-mode');
+            btn.classList.add('fs-btn'); 
+            btn.innerText = `FREE SPIN (${state.fsLeft})`;
+            document.getElementById('bet').disabled = true;
+            autoBtn.disabled = true;
+        } else {
+            border.classList.remove('fs-active');
+            info.classList.remove('fs-mode');
+            btn.classList.remove('fs-btn');
+            btn.innerText = "QUAY";
+            document.getElementById('bet').disabled = false;
+            autoBtn.disabled = false;
+        }
+    }
+
+    // 4. GAMEPLAY
+    function spinClick() {
+        if(state.isSpin) return;
+        if(state.isAuto) stopAuto();
+        doSpin();
+    }
+
+    function autoClick() {
+        if(state.isSpin || state.fsActive) return;
+        if(state.isAuto) stopAuto();
+        else {
+            state.isAuto = true;
+            document.getElementById('btn-auto').innerText = "DỪNG";
+            document.getElementById('btn-auto').classList.add('active');
+            doSpin();
+        }
+    }
+
+    function stopAuto() {
+        state.isAuto = false;
+        document.getElementById('btn-auto').innerText = "AUTO";
+        document.getElementById('btn-auto').classList.remove('active');
+    }
+
+    function doSpin() {
+        if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+
+        let bet = parseInt(document.getElementById('bet').value);
+
+        if (state.fsActive) {
+            if (state.fsLeft > 0) {
+                state.fsLeft--;
+                document.getElementById('btn-spin').innerText = `FREE SPIN (${state.fsLeft})`;
+                msg(`KHO BẠC: ${state.fsAccum.toLocaleString()}`);
+            } else {
+                endFreeSpins();
+                return;
+            }
+        } else {
+            if (bet > state.bal) {
+                stopAuto();
+                document.getElementById('reset-ol').style.display = 'flex';
+                return;
+            }
+            state.bal -= bet; state.bet = bet; renderBal();
+        }
+
+        state.isSpin = true;
+        document.getElementById('btn-spin').classList.add('disabled');
+        snd('spin');
+
+        let result = calcResult();
+        startVisual(result);
+    }
+
+    function calcResult() {
+        let grid = [];
+        let forced = state.force; state.force = -1;
+        let sPos = [];
+        if(forced >= 0) {
+            let arr = [0,1,2,3,4];
+            sPos = arr.sort(()=>Math.random()-0.5).slice(0, forced);
+        }
+        for(let c=0; c<5; c++) {
+            let col = [];
+            let hasS = (forced >= 0 && sPos.includes(c));
+            for(let r=0; r<3; r++) {
+                if(hasS && r===1) col.push(SCAT); 
+                else {
+                    if(forced < 0 && Math.random() < 0.08) col.push(SCAT);
+                    else col.push(ICONS[Math.floor(Math.random()*(ICONS.length-1))]);
+                }
+            }
+            grid.push(col);
+        }
+        return grid;
+    }
+
+    function startVisual(grid) {
+        let cols = [0,1,2,3,4];
+        let scatCount = 0;
+
+        cols.forEach(i => {
+            let el = document.getElementById('c'+i);
+            el.classList.add('blur');
+            
+            let spinInt = setInterval(() => {
+                let h = '';
+                for(let k=0; k<3; k++) h += `<div class="symbol">${ICONS[Math.floor(Math.random()*ICONS.length)]}</div>`;
+                el.innerHTML = h;
+            }, 50);
+
+            setTimeout(() => {
+                clearInterval(spinInt);
+                el.classList.remove('blur');
+                let colRes = grid[i];
+                let h = '';
+                colRes.forEach(s => {
+                    let cls = s===SCAT ? 'symbol scatter' : 'symbol';
+                    h += `<div class="${cls}">${s}</div>`;
+                    if(s===SCAT) scatCount++;
+                });
+                el.innerHTML = h;
+                
+                if(colRes.includes(SCAT)) snd('scatter');
+                else snd('stop');
+
+                el.animate([{transform:'translateY(-20px)'},{transform:'translateY(0)'}], {duration:150});
+
+                if(i===4) setTimeout(() => checkWin
