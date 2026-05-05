@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NamKyBet - Scatter Summer v5.6</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Coiny&family=Quicksand:wght@500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff00ea;
+            --ocean-dark: #020b1a;
+            --sunset-orange: #ff7b00;
+            --glass-bg: rgba(2, 15, 30, 0.6);
+            --font-head: 'Coiny', cursive;
+            --font-body: 'Quicksand', sans-serif;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(180deg, var(--ocean-dark) 0%, #0a1931 40%, #20112c 70%, #4a1515 100%);
+            color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden; position: relative; padding-top: 20px;
+        }
+        #bubble-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+        .bubble {
+            position: absolute; bottom: -20px;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.6), rgba(0, 243, 255, 0.1));
+            border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2), inset 0 0 5px rgba(255,255,255,0.3);
+            animation: floatUp linear infinite;
+        }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-120vh) scale(1.2); opacity: 0; } }
+        .header { text-align: center; z-index: 10; margin-bottom: 15px; }
+        .logo {
+            font-family: var(--font-head); font-size: 2.8rem; text-transform: uppercase; letter-spacing: 2px;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink), var(--sunset-orange));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.5));
+        }
+        .subtitle { font-size: 0.9rem; font-weight: 900; letter-spacing: 2px; color: var(--neon-cyan); text-shadow: 0 0 5px var(--neon-cyan); text-transform: uppercase; }
+        .balance-box {
+            background: rgba(0,0,0,0.5); border: 2px solid var(--neon-cyan); border-radius: 30px; padding: 10px 30px; margin-bottom: 20px;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); z-index: 10; backdrop-filter: blur(5px);
+        }
+        .balance-label { font-size: 0.75rem; color: var(--neon-pink); font-weight: bold; text-align: center; margin-bottom: 5px;}
+        .balance-amount { font-family: var(--font-head); font-size: 1.8rem; color: #fff; text-shadow: 0 0 10px var(--neon-cyan); }
+        
+        /* Cấu trúc mới tránh lỗi xoá Badge */
+        .slot-container {
+            position: relative; width: 95%; max-width: 500px; margin-bottom: 20px; z-index: 10;
+        }
+        .slot-machine {
+            background: var(--glass-bg); border: 2px solid rgba(0, 243, 255, 0.5); border-radius: 15px; padding: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(0, 243, 255, 0.2); backdrop-filter: blur(15px);
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; width: 100%; min-height: 220px;
+        }
+        .slot-item {
+            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 0, 234, 0.3); border-radius: 10px; height: 60px;
+            display: flex; align-items: center; justify-content: center; font-size: 2.2rem; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); transition: 0.1s;
+        }
+        .slot-item.win {
+            border-color: var(--neon-cyan); background: rgba(0, 243, 255, 0.2);
+            box-shadow: 0 0 15px var(--neon-cyan), inset 0 0 15px var(--neon-cyan); animation: pulseWin 0.5s infinite alternate;
+        }
+        @keyframes pulseWin { to { transform: scale(1.1); filter: drop-shadow(0 0 10px #fff); } }
+        .slot-item.rocket-fly { animation: flyUp 1.5s ease-in forwards; }
+        @keyframes flyUp { 0% { transform: translateY(0); opacity: 1; } 50% { filter: drop-shadow(0 10px 10px var(--sunset-orange)); } 100% { transform: translateY(-500px); opacity: 0; } }
+        
+        .controls { width: 95%; max-width: 500px; z-index: 10; display: flex; flex-direction: column; gap: 15px; }
+        .bet-input-group { display: flex; gap: 10px; }
+        .bet-input {
+            flex: 1; background: rgba(0,0,0,0.6); border: 1px solid var(--neon-pink); border-radius: 10px;
+            color: #fff; font-family: var(--font-head); font-size: 1.2rem; padding: 10px; text-align: center; outline: none;
+        }
+        .bet-btn {
+            background: rgba(255, 0, 234, 0.2); border: 1px solid var(--neon-pink); border-radius: 10px;
+            color: #fff; font-family: var(--font-body); font-weight: bold; padding: 0 15px; cursor: pointer; transition: 0.2s;
+        }
+        .bet-btn:active { background: var(--neon-pink); }
+        .spin-btn {
+            background: linear-gradient(180deg, var(--neon-cyan), #0088ff); border: none; border-radius: 50px; color: #000;
+            font-family: var(--font-head); font-size: 1.5rem; padding: 15px; cursor: pointer; box-shadow: 0 5px 15px rgba(0, 243, 255, 0.4), inset 0 2px 5px rgba(255,255,255,0.5);
+            text-transform: uppercase; letter-spacing: 2px; transition: 0.2s; position: relative; overflow: hidden;
+        }
+        .spin-btn:active { transform: scale(0.95); box-shadow: 0 0 10px var(--neon-cyan); }
+        .spin-btn.disabled { background: #555; color: #888; box-shadow: none; pointer-events: none; }
+        .free-spin-badge {
+            position: absolute; top: -10px; right: -10px; background: var(--neon-pink); color: #fff;
+            font-family: var(--font-head); font-size: 1rem; padding: 5px 10px; border-radius: 20px; box-shadow: 0 0 10px var(--neon-pink); display: none; z-index: 20;
+        }
+        .click-ripple {
+            position: absolute; border: 2px solid var(--neon-cyan); border-radius: 50%; transform: translate(-50%, -50%);
+            animation: rippleAnim 0.6s ease-out; pointer-events: none; z-index: 9999; box-shadow: 0 0 15px var(--neon-cyan), inset 0 0 10px var(--neon-pink);
+        }
+        @keyframes rippleAnim { 0% { width: 0; height: 0; opacity: 1; border-width: 4px; } 100% { width: 150px; height: 150px; opacity: 0; border-width: 0px; } }
+        .shake-screen { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-8px, 0, 0); } 40%, 60% { transform: translate3d(8px, 0, 0); } }
+        #win-popup {
+            position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(0); font-family: var(--font-head);
+            font-size: 3rem; color: var(--sunset-orange); text-shadow: 0 0 20px #ff0, 0 0 40px var(--sunset-orange), 2px 2px 0 #000; z-index: 1000; pointer-events: none; transition: 0.3s; text-align: center; white-space: nowrap;
+        }
+        #win-popup.show { transform: translate(-50%, -50%) scale(1); }
+        .win-desc { font-size: 1.2rem; color: #fff; text-shadow: 0 0 5px #000; display: block;}
+        #admin-trigger { position: absolute; top: 0; right: 0; width: 60px; height: 60px; z-index: 999; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div id="admin-trigger" onclick="openAdmin()"></div>
+    <div id="bubble-container"></div>
+
+    <div class="header">
+        <div class="logo">NAMKYBET</div>
+        <div class="subtitle">SCATTER SUMMER v5.6</div>
+    </div>
+
+    <div class="balance-box">
+        <div class="balance-label">TÀI KHOẢN (VNĐ)</div>
+        <div class="balance-amount" id="balanceDisplay">5,000,000</div>
+    </div>
+
+    <div class="slot-container">
+        <div class="free-spin-badge" id="fsBadge">0 LƯỢT FREE</div>
+        <div class="slot-machine" id="slotGrid"></div>
+    </div>
+    
+    <div class="controls">
+        <div class="bet-input-group">
+            <button class="bet-btn" onclick="adjustBet(0.5)">/2</button>
+            <input type="number" id="betAmount" class="bet-input" value="10000" step="10000" min="10000">
+            <button class="bet-btn" onclick="adjustBet(2)">x2</button>
+        </div>
+        <button class="spin-btn" id="spinBtn" onclick="spin()">QUAY (SPIN)</button>
+    </div>
+
+    <div id="win-popup">
+        BIG WIN!
+        <span class="win-desc" id="winDesc">+100,000</span>
+    </div>
+
+    <script>
+        var audioCtx = null;
+        function initAudio() {
+            if (!audioCtx) {
+                var AC = window.AudioContext || window.webkitAudioContext;
+                if(AC) audioCtx = new AC();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playTachTach() {
+            initAudio();
+            if(!audioCtx) return;
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.05);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+        }
+
+        function playTingTing() {
+            initAudio();
+            if(!audioCtx) return;
+            var chords = [880, 1108, 1318]; 
+            chords.forEach(function(freq, i) {
+                setTimeout(function() {
+                    var osc = audioCtx.createOscillator();
+                    var gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+                }, i * 150);
+            });
+        }
+
+        function playRocketSound() {
+            initAudio();
+            if(!audioCtx) return;
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(1500, audioCtx.currentTime + 1);
+            gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 1);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 1);
+        }
+
+        var symbols = ['\uD83C\uDF53', '\uD83C\uDF4A', '\uD83C\uDF47', '\uD83C\uDF49', '\uD83D\uDC8E', '\uD83D\uDE80', '\uD83C\uDF4B', '\uD83C\uDF52', '\uD83D\uDD14'];
+        var trashSymbols = ['\uD83C\uDF4B', '\uD83C\uDF52', '\uD83D\uDD14'];
+        
+        var balance = 5000000;
+        var freeSpins = 0;
+        var isSpinning = false;
+        
+        var forceNho = false;
+        var forceRocket = false;
+        var forceDiamond = false;
+
+        function initGrid() {
+            var gridEl = document.getElementById('slotGrid');
+            gridEl.innerHTML = '';
+            for(var i=0; i<15; i++) {
+                var div = document.createElement('div');
+                div.className = 'slot-item';
+                div.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                gridEl.appendChild(div);
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('balanceDisplay').innerText = balance.toLocaleString('vi-VN');
+            var fsBadge = document.getElementById('fsBadge');
+            var spinBtn = document.getElementById('spinBtn');
+            if (freeSpins > 0) {
+                fsBadge.style.display = 'block';
+                fsBadge.innerText = freeSpins + ' FREE';
+                spinBtn.innerText = 'QUAY MIEN PHI';
+                spinBtn.style.background = 'linear-gradient(180deg, var(--neon-pink), #ff0055)';
+            } else {
+                fsBadge.style.display = 'none';
+                spinBtn.innerText = 'QUAY (SPIN)';
+                spinBtn.style.background = 'linear-gradient(180deg, var(--neon-cyan), #0088ff)';
+            }
+        }
+
+        function adjustBet(multiplier) {
+            initAudio(); 
+            if(isSpinning || freeSpins > 0) return;
+            var betInput = document.getElementById('betAmount');
+            var currentBet = parseInt(betInput.value);
+            var newBet = currentBet * multiplier;
+            if(newBet < 10000) newBet = 10000;
+            if(newBet > balance && balance > 0) newBet = balance;
+            betInput.value = newBet;
+        }
+
+        function spin() {
+            initAudio(); 
+            if (isSpinning) return;
+            var betInput = document.getElementById('betAmount');
+            var spinBtn = document.getElementById('spinBtn');
+            var winPopup = document.getElementById('win-popup');
+            var bet = parseInt(betInput.value);
+
+            if (freeSpins > 0) {
+                freeSpins--;
+            } else {
+                if (balance < 10000) {
+                    var xintien = confirm("Het tien roi dai ca! Bam OK de xin lai 5 cu go no nhe?");
+                    if(xintien) {
+                        balance = 5000000;
+                        updateUI();
+                    }
+                    return;
+                }
+                if (bet > balance || isNaN(bet) || bet <= 0) {
+                    alert("Khong du tien cuoc muc nay! Giam tien xuong dai ca oi.");
+                    return;
+                }
+                balance -= bet;
+            }
+            
+            isSpinning = true;
+            spinBtn.classList.add('disabled');
+            winPopup.classList.remove('show');
+            updateUI();
+
+            var items = document.querySelectorAll('.slot-item');
+            items.forEach(function(item) { item.className = 'slot-item'; });
+
+            var spinInterval = setInterval(function() {
+                playTachTach();
+                items.forEach(function(item) {
+                    item.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                });
+            }, 100);
+
+            setTimeout(function() {
+                clearInterval(spinInterval);
+                generateResult(bet);
+            }, 2000);
+        }
+
+        function generateResult(bet) {
+            var items = document.querySelectorAll('.slot-item');
+            var finalSymbols = [];
+            var r = Math.random();
+
+            var isForceRocket = forceRocket || (r < 0.005);
+            var is4Rocket = (!isForceRocket && r < 0.01);
+            var is3Rocket = (!is4Rocket && !isForceRocket && r < 0.05);
+            var isForceDiamond = forceDiamond || (!is3Rocket && r < 0.07);
+            var isForceHau = (!isForceDiamond && r < 0.13);
+            var isForceNho = forceNho || (!isForceHau && r < 0.25);
+            var isForceCam = (!isForceNho && r < 0.35);
+            var isForceDau = (!isForceCam && r < 0.65);
+
+            for(var i=0; i<15; i++) { finalSymbols.push(symbols[Math.floor(Math.random() * symbols.length)]); }
+
+            if (isForceRocket) insertSymbols(finalSymbols, '\uD83D\uDE80', 5);
+            else if (is4Rocket) insertSymbols(finalSymbols, '\uD83D\uDE80', 4);
+            else if (is3Rocket) insertSymbols(finalSymbols, '\uD83D\uDE80', 3);
+            else if (isForceDiamond) insertSymbols(finalSymbols, '\uD83D\uDC8E', 5);
+            else if (isForceHau) insertSymbols(finalSymbols, '\uD83C\uDF49', 5);
+            else if (isForceNho) insertSymbols(finalSymbols, '\uD83C\uDF47', 5);
+            else if (isForceCam) insertSymbols(finalSymbols, '\uD83C\uDF4A', 5);
+            else if (isForceDau) insertSymbols(finalSymbols, '\uD83C\uDF53', 5);
+            else {
+                finalSymbols = [];
+                for(var j=0; j<15; j++) {
+                    finalSymbols.push(trashSymbols[Math.floor(Math.random() * trashSymbols.length)]);
+                }
+                finalSymbols[0] = '\uD83C\uDF53'; finalSymbols[1] = '\uD83C\uDF53'; finalSymbols[2] = '\uD83C\uDF4A';
+            }
+
+            finalSymbols.forEach(function(sym, index) { items[index].innerText = sym; });
+            calculateWin(finalSymbols, bet);
+            
+            forceNho = false; forceRocket = false; forceDiamond = false;
+        }
+
+        function insertSymbols(arr, sym, count) {
+            var positions = [];
+            while(positions.length < count) {
+                var pos = Math.floor(Math.random() * 15);
+                if(!positions.includes(pos)) positions.push(pos);
+            }
+            positions.forEach(function(p) { arr[p] = sym; });
+            for(var i=0; i<15; i++) {
+                if(arr[i] === sym && !positions.includes(i)) {
+                    arr[i] = trashSymbols[Math.floor(Math.random() * trashSymbols.length)];
+                }
+            }
+        }
+
+        function calculateWin(result, bet) {
+            var items = document.querySelectorAll('.slot-item');
+            var counts = {};
+            result.forEach(function(s) { counts[s] = (counts[s] || 0) + 1; });
+
+            var winAmount = 0; var winSymbol = null; var addedSpins = 0;
+
+            if (counts['\uD83D\uDE80'] >= 3) {
+                if (counts['\uD83D\uDE80'] == 3) addedSpins = 8;
+                if (counts['\uD83D\uDE80'] == 4) addedSpins = 10;
+                if (counts['\uD83D\uDE80'] >= 5) addedSpins = 20;
+                winSymbol = '\uD83D\uDE80'; freeSpins += addedSpins;
+                document.body.classList.add('shake-screen');
+                setTimeout(function() { document.body.classList.remove('shake-screen'); }, 500);
+                playRocketSound();
+            } else {
+                if (counts['\uD83D\uDC8E'] >= 5) { winAmount = bet * 10; winSymbol = '\uD83D\uDC8E'; }
+                else if (counts['\uD83C\uDF49'] >= 5) { winAmount = bet * 2.5; winSymbol = '\uD83C\uDF49'; }
+                else if (counts['\uD83C\uDF47'] >= 5) { winAmount = bet * 1.5; winSymbol = '\uD83C\uDF47'; }
+                else if (counts['\uD83C\uDF4A'] >= 5) { winAmount = bet * 0.8; winSymbol = '\uD83C\uDF4A'; }
+                else if (counts['\uD83C\uDF53'] >= 5) { winAmount = bet * 0.5; winSymbol = '\uD83C\uDF53'; }
+            }
+
+            if (winSymbol) {
+                items.forEach(function(item) {
+                    if (item.innerText === winSymbol) {
+                        item.classList.add('win');
+                        if (winSymbol === '\uD83D\uDE80') setTimeout(function() { item.classList.add('rocket-fly'); }, 500);
+                    }
+                });
+                if (winAmount > 0) {
+                    balance += winAmount;
+                    showWinPopup("+" + winAmount.toLocaleString('vi-VN') + " VND");
+                    playTingTing();
+                    if(winAmount >= bet * 1.5) createRippleEffect();
+                } else if (addedSpins > 0) {
+                    showWinPopup("+" + addedSpins + " FREE SPINS");
+                    createRippleEffect();
+                }
+            }
+
+            updateUI();
+            setTimeout(function() {
+                isSpinning = false;
+                document.getElementById('spinBtn').classList.remove('disabled');
+                if(freeSpins > 0) setTimeout(spin, 1000);
+            }, 1000);
+        }
+
+        function showWinPopup(text) {
+            var winPopup = document.getElementById('win-popup');
+            document.getElementById('winDesc').innerText = text;
+            winPopup.classList.add('show');
+            setTimeout(function() { winPopup.classList.remove('show'); }, 2500);
+        }
+
+        function createRippleEffect(x, y) {
+            var ripple = document.createElement('div');
+            ripple.className = 'click-ripple';
+            ripple.style.left = (x || window.innerWidth / 2) + 'px';
+            ripple.style.top = (y || window.innerHeight / 2) + 'px';
+            document.body.appendChild(ripple);
+            setTimeout(function() { ripple.remove(); }, 600);
+        }
+
+        document.addEventListener('click', function(e) {
+            initAudio(); 
+            if(e.target.tagName !== 'BUTTON' && e.target.id !== 'admin-trigger' && e.target.tagName !== 'INPUT') {
+                createRippleEffect(e.clientX, e.clientY);
+            }
+        });
+
+        function openAdmin() {
+            var pass = prompt("NHAP PASS ADMIN VAO DAY:");
+            if (pass === "1836") {
+                var cmd = prompt("CHON CHUC NANG:\n1. Set Tien\n2. 5 Ten Lua\n3. 5 Kim Cuong\n4. 5 Nho");
+                if (cmd === "1") {
+                    var amt = prompt("Nhap so du muon doi:");
+                    if (!isNaN(amt) && amt) { balance = parseInt(amt); updateUI(); alert("Da hack tien!"); }
+                } else if (cmd === "2") {
+                    forceRocket = true; alert("Luot tiep: 5 Ten Lua!");
+                } else if (cmd === "3") {
+                    forceDiamond = true; alert("Luot tiep: 5 Kim Cuong!");
+                } else if (cmd === "4") {
+                    forceNho = true; alert("Luot tiep: 5 Nho!");
+                }
+            } else if (pass !== null) { alert("Mat khau sai, cut!"); }
+        }
+
+        // Khởi động
+        initGrid();
+    </script>
+</body>
+</html>
