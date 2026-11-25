@@ -1,0 +1,2750 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NamKyBet 🎄 Nổ Hũ Giáng Sinh</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Be Vietnam Pro cho hiển thị tiếng Việt sắc nét -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================================
+           CHRISTMAS NIGHT SLOT THEME & BASE STYLES
+        ========================================================= */
+        :root {
+            --bg-night: #0b132b;
+            --bg-deep: #060b1a;
+            --gold: #f5c542;
+            --gold-bright: #fef08a;
+            --crimson: #c1121f;
+            --crimson-dark: #780000;
+            --pine: #1b4332;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        input {
+            user-select: text;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+            background: radial-gradient(circle at top center, #14244d 0%, #0b132b 58%, #060b1a 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Background Snowfall Canvas */
+        #snowCanvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Fullscreen Golden Coin Rain Canvas */
+        #coinCanvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 65;
+        }
+
+        .app-shell {
+            position: relative;
+            z-index: 10;
+            max-width: 460px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 24px;
+        }
+
+        /* =========================================================
+           MARQUEE TICKER & CHRISTMAS STRING LIGHTS
+        ========================================================= */
+        .marquee-wrap {
+            overflow: hidden;
+            white-space: nowrap;
+            background: linear-gradient(90deg, rgba(120, 0, 0, 0.96), rgba(193, 18, 31, 0.96), rgba(120, 0, 0, 0.96));
+            border-top: 1px solid rgba(245, 197, 66, 0.45);
+            border-bottom: 1.5px solid rgba(245, 197, 66, 0.68);
+        }
+
+        .marquee-track {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marqueeRun 30s linear infinite;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #fff7d6;
+        }
+
+        @keyframes marqueeRun {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .fairy-lights {
+            display: flex;
+            justify-content: space-around;
+            height: 11px;
+            padding: 0 12px;
+            pointer-events: none;
+        }
+
+        .bulb {
+            width: 6px;
+            height: 9px;
+            border-radius: 50% 50% 60% 60%;
+            animation: bulbGlow 1.7s ease-in-out infinite alternate;
+        }
+        .bulb:nth-child(4n+1) { background: #ff4d6d; box-shadow: 0 0 8px #ff4d6d; animation-delay: 0s; }
+        .bulb:nth-child(4n+2) { background: #ffd166; box-shadow: 0 0 8px #ffd166; animation-delay: 0.4s; }
+        .bulb:nth-child(4n+3) { background: #38bdf8; box-shadow: 0 0 8px #38bdf8; animation-delay: 0.8s; }
+        .bulb:nth-child(4n+4) { background: #4ade80; box-shadow: 0 0 8px #4ade80; animation-delay: 1.2s; }
+
+        @keyframes bulbGlow {
+            0% { opacity: 0.4; transform: scale(0.85); }
+            100% { opacity: 1; transform: scale(1.15); }
+        }
+
+        /* =========================================================
+           LUXURY CARDS & JACKPOT POTS
+        ========================================================= */
+        .glass-card {
+            background: linear-gradient(160deg, rgba(20, 35, 72, 0.9), rgba(9, 17, 38, 0.95));
+            border: 1px solid rgba(245, 197, 66, 0.32);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.42);
+        }
+
+        .jackpot-card {
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .jackpot-active {
+            border-color: #fde047 !important;
+            box-shadow: 0 0 18px rgba(250, 204, 21, 0.65), inset 0 0 12px rgba(250, 204, 21, 0.25);
+            transform: translateY(-2px) scale(1.03);
+            z-index: 2;
+        }
+
+        .jackpot-inactive {
+            opacity: 0.6;
+            filter: saturate(0.75);
+        }
+
+        /* =========================================================
+           CANDY-CANE 5x3 SLOT MACHINE FRAME & REELS
+        ========================================================= */
+        .candy-frame {
+            padding: 7px;
+            border-radius: 22px;
+            background: repeating-linear-gradient(
+                -45deg,
+                #c1121f 0px,
+                #c1121f 10px,
+                #ffffff 10px,
+                #ffffff 20px,
+                #1b4332 20px,
+                #1b4332 24px,
+                #ffffff 24px,
+                #ffffff 34px
+            );
+            box-shadow:
+                0 14px 32px rgba(0, 0, 0, 0.72),
+                0 0 0 2.5px #f5c542,
+                0 0 26px rgba(245, 197, 66, 0.28);
+        }
+
+        .slot-inner-bezel {
+            background: linear-gradient(180deg, #081024 0%, #0f1f3d 50%, #081024 100%);
+            border-radius: 16px;
+            border: 2px solid rgba(245, 197, 66, 0.72);
+            padding: 6px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 10px 24px rgba(0, 0, 0, 0.85);
+        }
+
+        .reels-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            position: relative;
+        }
+
+        .reel-col {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            position: relative;
+            border-radius: 12px;
+            padding: 2px;
+            background: linear-gradient(180deg, rgba(6, 12, 26, 0.9), rgba(18, 36, 70, 0.65), rgba(6, 12, 26, 0.9));
+            border: 1px solid rgba(245, 197, 66, 0.16);
+            overflow: hidden;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        /* Dramatic anticipation glow when 2 Scatters have landed */
+        .reel-anticipation {
+            border-color: #fde047 !important;
+            box-shadow: 0 0 18px rgba(250, 204, 21, 0.95), inset 0 0 18px rgba(239, 68, 68, 0.65);
+            animation: anticipationPulse 0.32s ease-in-out infinite alternate;
+        }
+
+        @keyframes anticipationPulse {
+            0% { box-shadow: 0 0 10px rgba(250, 204, 21, 0.65), inset 0 0 10px rgba(239, 68, 68, 0.35); }
+            100% { box-shadow: 0 0 24px rgba(250, 204, 21, 1), inset 0 0 22px rgba(250, 204, 21, 0.65); }
+        }
+
+        /* Individual Symbol Tile */
+        .slot-cell {
+            aspect-ratio: 1 / 1.06;
+            min-height: 62px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 1.5px solid rgba(255, 255, 255, 0.12);
+            box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.16), 0 3px 6px rgba(0, 0, 0, 0.45);
+            transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+            overflow: hidden;
+        }
+
+        .slot-emoji {
+            font-size: 1.85rem;
+            line-height: 1;
+            filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.55));
+            transition: transform 0.2s ease;
+        }
+
+        @media (min-width: 400px) {
+            .slot-emoji {
+                font-size: 2.15rem;
+            }
+        }
+
+        .symbol-tag {
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8px;
+            font-weight: 900;
+            letter-spacing: 0.4px;
+            padding: 1px 5px;
+            border-radius: 99px;
+            white-space: nowrap;
+            text-transform: uppercase;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Symbol Gradients */
+        .sym-candy    { background: linear-gradient(155deg, #4c1d3d 0%, #271026 100%); border-color: rgba(244, 114, 182, 0.35); }
+        .sym-stocking { background: linear-gradient(155deg, #5b1a1a 0%, #2a0d12 100%); border-color: rgba(248, 113, 113, 0.35); }
+        .sym-bell     { background: linear-gradient(155deg, #5c4312 0%, #291c08 100%); border-color: rgba(251, 191, 36, 0.4); }
+        .sym-tree     { background: linear-gradient(155deg, #164e36 0%, #0a251b 100%); border-color: rgba(52, 211, 153, 0.4); }
+        .sym-reindeer { background: linear-gradient(155deg, #6b3410 0%, #311708 100%); border-color: rgba(251, 146, 60, 0.48); }
+        .sym-santa    { background: linear-gradient(155deg, #991b1b 0%, #450a0a 100%); border-color: rgba(253, 224, 71, 0.65); }
+        .sym-wild     {
+            background: linear-gradient(145deg, #0ea5e9 0%, #1d4ed8 55%, #0f172a 100%);
+            border-color: #67e8f9;
+            box-shadow: inset 0 0 12px rgba(103, 232, 249, 0.55), 0 0 10px rgba(56, 189, 248, 0.45);
+        }
+        .sym-scatter  {
+            background: linear-gradient(145deg, #dc2626 0%, #991b1b 55%, #450a0a 100%);
+            border-color: #fde047;
+            box-shadow: inset 0 0 12px rgba(253, 224, 71, 0.5), 0 0 12px rgba(239, 68, 68, 0.55);
+        }
+        .sym-jackpot  {
+            background: linear-gradient(145deg, #f59e0b 0%, #b45309 55%, #451a03 100%);
+            border-color: #fef08a;
+            box-shadow: inset 0 0 14px rgba(254, 240, 138, 0.7), 0 0 14px rgba(245, 197, 66, 0.65);
+        }
+
+        /* Spinning Motion Blur & Stop Bounce */
+        @keyframes reelBlurScroll {
+            0%   { transform: translateY(-6px); filter: blur(1.4px); }
+            50%  { transform: translateY(6px);  filter: blur(2px); }
+            100% { transform: translateY(-6px); filter: blur(1.4px); }
+        }
+
+        .reel-spinning .slot-cell {
+            animation: reelBlurScroll 0.11s linear infinite;
+        }
+
+        @keyframes reelStopBounce {
+            0%   { transform: translateY(-10px); }
+            60%  { transform: translateY(4px); }
+            100% { transform: translateY(0); }
+        }
+
+        .reel-landed {
+            animation: reelStopBounce 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* Winning Cell Highlight */
+        .cell-win {
+            border-color: #fef08a !important;
+            box-shadow: 0 0 16px #fde047, inset 0 0 12px rgba(254, 240, 138, 0.65) !important;
+            z-index: 6;
+            animation: winCellPulse 0.65s ease-in-out infinite alternate;
+        }
+
+        @keyframes winCellPulse {
+            0%   { transform: scale(1); }
+            100% { transform: scale(1.065); }
+        }
+
+        .cell-dim {
+            opacity: 0.45;
+            filter: brightness(0.75);
+        }
+
+        /* SVG Paylines Overlay */
+        #paylineSvg {
+            position: absolute;
+            inset: 6px;
+            width: calc(100% - 12px);
+            height: calc(100% - 12px);
+            pointer-events: none;
+            z-index: 12;
+        }
+
+        .payline-path {
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 0.45s ease forwards;
+        }
+
+        @keyframes drawLine {
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* Floating Win Banner over Reels */
+        @keyframes winFloatPop {
+            0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
+            25%  { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+            80%  { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -62%) scale(0.95); opacity: 0; }
+        }
+
+        .win-popup-anim {
+            animation: winFloatPop 1.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        /* =========================================================
+           BUTTONS & ANIMATIONS
+        ========================================================= */
+        .btn-press {
+            transition: transform 0.11s ease, filter 0.15s ease, box-shadow 0.15s ease;
+        }
+        .btn-press:active:not(:disabled) {
+            transform: scale(0.94);
+            filter: brightness(1.1);
+        }
+        .btn-press:disabled {
+            opacity: 0.52;
+            cursor: not-allowed;
+        }
+
+        .spin-btn-main {
+            background: linear-gradient(180deg, #ef233c 0%, #c1121f 55%, #780000 100%);
+            border: 2.5px solid #fde047;
+            box-shadow: 0 7px 20px rgba(193, 18, 31, 0.6), inset 0 2px 3px rgba(255, 255, 255, 0.35);
+        }
+
+        .spin-btn-free {
+            background: linear-gradient(180deg, #f59e0b 0%, #d97706 55%, #78350f 100%);
+            border: 2.5px solid #fef08a;
+            box-shadow: 0 7px 22px rgba(245, 158, 11, 0.7), inset 0 2px 3px rgba(255, 255, 255, 0.4);
+        }
+
+        @keyframes bailoutGlow {
+            0%, 100% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.8), 0 0 22px rgba(250, 204, 21, 0.45); transform: scale(1); }
+            50% { box-shadow: 0 0 24px rgba(239, 68, 68, 1), 0 0 38px rgba(250, 204, 21, 0.85); transform: scale(1.02); }
+        }
+
+        .bailout-pulse {
+            animation: bailoutGlow 1.25s ease-in-out infinite;
+        }
+
+        @keyframes modalPop {
+            0%   { transform: scale(0.55); opacity: 0; }
+            70%  { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pop-in {
+            animation: modalPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes inputShake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-6px); }
+            80% { transform: translateX(6px); }
+        }
+        .shake-error {
+            animation: inputShake 0.36s ease;
+        }
+
+        .thin-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
+        .thin-scroll::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.45); border-radius: 99px; }
+        .thin-scroll::-webkit-scrollbar-thumb { background: rgba(245, 197, 66, 0.45); border-radius: 99px; }
+    </style>
+</head>
+<body>
+    <!-- Snowfall & Coin Celebration Canvases -->
+    <canvas id="snowCanvas"></canvas>
+    <canvas id="coinCanvas"></canvas>
+
+    <!-- Toast Notification Container (No alert()/confirm() ever) -->
+    <div id="toastContainer" class="fixed top-12 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-[420px] flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Main Mobile-First Container -->
+    <div class="app-shell">
+
+        <!-- 1. TOP HEADER BAR WITH SUBTLE "TND" LOGO IN TOP-RIGHT -->
+        <header class="px-3 pt-2.5 pb-1.5 flex items-center justify-between gap-2">
+            <div class="min-w-0">
+                <h1 class="text-sm sm:text-base font-black tracking-wide bg-gradient-to-r from-yellow-200 via-amber-400 to-red-400 bg-clip-text text-transparent truncate">
+                    NAMKYBET 🎄 NỔ HŨ GIÁNG SINH
+                </h1>
+                <p class="text-[10px] text-slate-400 font-semibold -mt-0.5">20 Dòng Trả Thưởng • Săn Hũ Noel 2026</p>
+            </div>
+
+            <div class="flex items-center gap-1.5 shrink-0">
+                <!-- Paytable / Info (?) Button -->
+                <button id="paytableBtn" aria-label="Bảng trả thưởng" class="btn-press w-8 h-8 rounded-xl bg-slate-900/90 border border-yellow-500/45 text-yellow-300 font-black text-xs flex items-center justify-center">
+                    ?
+                </button>
+                <!-- Sound Toggle -->
+                <button id="soundBtn" aria-label="Bật tắt âm thanh" class="btn-press w-8 h-8 rounded-xl bg-slate-900/90 border border-yellow-500/45 text-sm flex items-center justify-center">
+                    🔊
+                </button>
+                <!-- Subtle Studio Watermark Badge "TND" (Secret Admin Trigger) -->
+                <button id="tndLogoBtn" title="TND Studio" class="btn-press px-2 h-8 rounded-xl bg-slate-900/75 border border-slate-700/80 hover:border-yellow-500/40 text-[10px] font-black tracking-widest text-slate-400/90 flex items-center justify-center">
+                    TND
+                </button>
+            </div>
+        </header>
+
+        <!-- 2. MARQUEE TICKER & CHRISTMAS STRING LIGHTS -->
+        <div class="marquee-wrap py-1">
+            <div class="marquee-track">
+                🎄 Chúc mừng HoangKiet_99 vừa NỔ HŨ GRAND 385,420,000đ! &nbsp;&nbsp;•&nbsp;&nbsp;
+                🎁 Chúc mừng LinhXinh_2k8 vừa húp Free Spin x12 ăn 42,500,000đ! &nbsp;&nbsp;•&nbsp;&nbsp;
+                ⭐ Chúc mừng MinhDuc_Q1 vừa NỔ HŨ MAJOR 94,180,000đ ở phòng 250K! &nbsp;&nbsp;•&nbsp;&nbsp;
+                🎅 Chúc mừng BaoLong_SG vừa ăn MEGA WIN 18,750,000đ với bộ 5 Ông Già Noel! &nbsp;&nbsp;•&nbsp;&nbsp;
+                ❄️ Sự kiện Giáng Sinh: Săn 3 Hộp Quà 🎁 nhận ngay 10 Vòng Quay Miễn Phí!
+            </div>
+        </div>
+        <div class="fairy-lights" aria-hidden="true">
+            <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+            <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+            <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+            <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+        </div>
+
+        <!-- 3. WALLET BALANCE BAR & BÁO NHÀ BUTTON -->
+        <section class="px-3 pt-1">
+            <div class="glass-card rounded-2xl px-3 py-2 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                    <span class="text-xl shrink-0">💰</span>
+                    <div class="min-w-0">
+                        <div class="text-[10px] uppercase tracking-wider text-slate-400 font-bold leading-none">Số dư ví</div>
+                        <div id="balanceDisplay" class="text-lg sm:text-xl font-black text-yellow-300 tracking-tight truncate leading-tight mt-0.5">
+                            20,000,000đ
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right shrink-0">
+                    <div class="text-[10px] uppercase tracking-wider text-slate-400 font-bold leading-none">Vừa thắng</div>
+                    <div id="lastWinDisplay" class="text-sm sm:text-base font-black text-emerald-400 leading-tight mt-0.5">
+                        0đ
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prominent "BÁO NHÀ" Bailout Button (visible when balance < 10,000đ) -->
+            <div id="bailoutWrap" class="mt-2 hidden">
+                <button id="bailoutBtn" class="btn-press bailout-pulse w-full py-2.5 px-4 rounded-2xl bg-gradient-to-r from-red-700 via-red-600 to-amber-600 border-2 border-yellow-300 text-white font-black text-xs sm:text-sm tracking-wide flex items-center justify-center gap-2">
+                    <span>🏠</span>
+                    <span>BÁO NHÀ (+10 CỦ ĂN NOEL)</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- 4. THREE LIVE JACKPOT POTS (MINI / MAJOR / GRAND) -->
+        <section class="px-3 mt-2">
+            <div class="grid grid-cols-3 gap-1.5">
+                <!-- MINI POT (10K - 50K) -->
+                <div id="potCard-mini" class="jackpot-card rounded-2xl p-2 text-center bg-gradient-to-b from-emerald-900/90 via-emerald-950 to-slate-950 border-2 border-emerald-500/50">
+                    <div class="flex items-center justify-center gap-1">
+                        <span class="text-[10px] font-black text-emerald-300 tracking-wider">⭐ MINI</span>
+                    </div>
+                    <div id="potVal-mini" class="text-xs sm:text-[13px] font-black text-yellow-200 tracking-tight mt-0.5 truncate">
+                        18,542,000
+                    </div>
+                    <div class="text-[9px] text-emerald-200/80 font-bold mt-0.5">Cược 10K–50K</div>
+                </div>
+
+                <!-- MAJOR POT (100K - 250K) -->
+                <div id="potCard-major" class="jackpot-card rounded-2xl p-2 text-center bg-gradient-to-b from-sky-900/90 via-blue-950 to-slate-950 border-2 border-sky-400/50">
+                    <div class="flex items-center justify-center gap-1">
+                        <span class="text-[10px] font-black text-cyan-300 tracking-wider">⭐ MAJOR</span>
+                    </div>
+                    <div id="potVal-major" class="text-xs sm:text-[13px] font-black text-yellow-200 tracking-tight mt-0.5 truncate">
+                        92,186,000
+                    </div>
+                    <div class="text-[9px] text-cyan-200/80 font-bold mt-0.5">Cược 100K–250K</div>
+                </div>
+
+                <!-- GRAND POT (500K) -->
+                <div id="potCard-grand" class="jackpot-card rounded-2xl p-2 text-center bg-gradient-to-b from-red-800/95 via-red-950 to-slate-950 border-2 border-yellow-500/60">
+                    <div class="flex items-center justify-center gap-1">
+                        <span class="text-[10px] font-black text-yellow-300 tracking-wider">👑 GRAND</span>
+                    </div>
+                    <div id="potVal-grand" class="text-xs sm:text-[13px] font-black text-yellow-300 tracking-tight mt-0.5 truncate">
+                        388,450,000
+                    </div>
+                    <div class="text-[9px] text-yellow-200/85 font-bold mt-0.5">Cược 500K</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. FREE SPINS HUD BANNER (VISIBLE ONLY DURING FREE SPINS) -->
+        <section id="freeSpinHud" class="px-3 mt-2 hidden">
+            <div class="rounded-2xl px-3 py-2 bg-gradient-to-r from-amber-600 via-red-600 to-amber-600 border-2 border-yellow-200 shadow-lg flex items-center justify-between gap-2">
+                <div class="flex items-center gap-1.5">
+                    <span class="text-lg">🎁</span>
+                    <div>
+                        <div class="text-[10px] font-black uppercase text-yellow-100 leading-none">FREE SPINS NOEL</div>
+                        <div class="text-xs font-extrabold text-white mt-0.5">
+                            Còn <span id="fsLeftCount" class="text-yellow-200 text-sm font-black">10</span> lượt
+                        </div>
+                    </div>
+                </div>
+                <div class="px-2.5 py-1 rounded-xl bg-black/40 border border-yellow-300/70 text-center">
+                    <div class="text-[9px] font-bold text-yellow-200 leading-none">NHÂN HỆ SỐ</div>
+                    <div id="fsMultiplierVal" class="text-base font-black text-yellow-300 leading-tight">x2</div>
+                </div>
+                <div class="text-right">
+                    <div class="text-[9px] font-bold text-yellow-100 leading-none">TỔNG ĂN FS</div>
+                    <div id="fsTotalWinVal" class="text-xs sm:text-sm font-black text-white mt-0.5">0đ</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. 5x3 SLOT MACHINE REELS WITH CANDY-CANE FRAME & SVG PAYLINES -->
+        <section class="px-3 mt-2">
+            <div class="candy-frame">
+                <div class="slot-inner-bezel">
+                    <!-- 5 Columns x 3 Rows Grid -->
+                    <div id="reelsGrid" class="reels-grid">
+                        <div class="reel-col" id="reel-0"></div>
+                        <div class="reel-col" id="reel-1"></div>
+                        <div class="reel-col" id="reel-2"></div>
+                        <div class="reel-col" id="reel-3"></div>
+                        <div class="reel-col" id="reel-4"></div>
+                    </div>
+
+                    <!-- Animated Glowing SVG Payline Overlay -->
+                    <svg id="paylineSvg" viewBox="0 0 500 300" preserveAspectRatio="none"></svg>
+
+                    <!-- Floating Win Amount Popup inside Frame -->
+                    <div id="winFloatBanner" class="hidden absolute top-1/2 left-1/2 z-20 pointer-events-none px-5 py-2 rounded-2xl bg-gradient-to-r from-red-900/95 via-amber-700/95 to-red-900/95 border-2 border-yellow-300 shadow-2xl text-center">
+                        <div id="winFloatLabel" class="text-[10px] font-black uppercase tracking-widest text-yellow-200">TRÚNG DÒNG!</div>
+                        <div id="winFloatAmount" class="text-xl sm:text-2xl font-black text-yellow-300 drop-shadow">+0đ</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Spin Status Strip -->
+            <div class="mt-1.5 px-2 flex items-center justify-between text-[11px] font-bold text-slate-300">
+                <span id="statusStrip" class="truncate text-yellow-200/95">🎄 Chúc bạn săn Hũ Giáng Sinh rực rỡ!</span>
+                <span id="activePotTag" class="shrink-0 ml-2 px-2 py-0.5 rounded-full bg-slate-900 border border-yellow-500/40 text-[10px] text-yellow-300">
+                    Hũ: MINI
+                </span>
+            </div>
+        </section>
+
+        <!-- 7. BET CONTROLS & TACTILE SPIN BAR -->
+        <section class="px-3 mt-2">
+            <div class="glass-card rounded-2xl p-2.5">
+                <!-- Row 1: Bet Selector (- / Display / + / MAX 500K) -->
+                <div class="flex items-center gap-1.5">
+                    <button id="betMinusBtn" aria-label="Giảm cược" class="btn-press w-11 h-11 rounded-xl bg-slate-900 border border-yellow-500/45 text-yellow-300 text-xl font-black flex items-center justify-center shrink-0">
+                        −
+                    </button>
+
+                    <div class="flex-1 h-11 rounded-xl bg-slate-950/90 border border-yellow-500/45 flex flex-col items-center justify-center px-2">
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-none">Mức Cược / Lượt</span>
+                        <span id="betDisplay" class="text-base sm:text-lg font-black text-yellow-300 leading-tight mt-0.5">50,000đ</span>
+                    </div>
+
+                    <button id="betPlusBtn" aria-label="Tăng cược" class="btn-press w-11 h-11 rounded-xl bg-slate-900 border border-yellow-500/45 text-yellow-300 text-xl font-black flex items-center justify-center shrink-0">
+                        +
+                    </button>
+
+                    <button id="betMaxBtn" class="btn-press h-11 px-3 rounded-xl bg-gradient-to-b from-amber-500 to-amber-700 border border-yellow-200 text-slate-950 font-black text-[11px] leading-tight shrink-0">
+                        MAX<br>500K
+                    </button>
+                </div>
+
+                <!-- Quick Bet Tier Pills (10K, 25K, 50K, 100K, 250K, 500K) -->
+                <div id="betPillsRow" class="grid grid-cols-6 gap-1 mt-2">
+                    <!-- Rendered dynamically via JS -->
+                </div>
+
+                <!-- Row 2: AUTO / TURBO / MAIN QUAY BUTTON -->
+                <div class="grid grid-cols-4 gap-2 mt-2.5">
+                    <button id="autoBtn" class="btn-press h-14 rounded-2xl bg-slate-900/95 border-2 border-slate-700 text-slate-300 font-black text-xs flex flex-col items-center justify-center gap-0.5">
+                        <span class="text-base leading-none">🔄</span>
+                        <span id="autoBtnLabel">AUTO</span>
+                    </button>
+
+                    <button id="turboBtn" class="btn-press h-14 rounded-2xl bg-slate-900/95 border-2 border-slate-700 text-slate-300 font-black text-xs flex flex-col items-center justify-center gap-0.5">
+                        <span class="text-base leading-none">⚡</span>
+                        <span>TURBO</span>
+                    </button>
+
+                    <button id="spinBtn" class="btn-press spin-btn-main col-span-2 h-14 rounded-2xl text-white font-black text-lg tracking-wider flex items-center justify-center gap-2">
+                        <span id="spinBtnIcon">🎰</span>
+                        <span id="spinBtnText">QUAY</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. COMPACT COLLAPSIBLE FAKE BOT CHAT -->
+        <section class="px-3 mt-2.5">
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <button id="toggleChatBtn" class="w-full px-3.5 py-2 flex items-center justify-between text-xs font-extrabold text-slate-200">
+                    <span class="flex items-center gap-2">
+                        <span>💬</span> Kênh Chat Săn Hũ Noel
+                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-900/80 text-emerald-300 text-[10px]">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span id="onlineCount">528</span> online
+                        </span>
+                        <span id="chatUnreadDot" class="hidden px-1.5 py-0.5 rounded-full bg-red-600 text-white text-[9px]">Mới</span>
+                    </span>
+                    <span id="chatChevron" class="transition-transform duration-200">▼</span>
+                </button>
+
+                <div id="chatDrawer" class="hidden border-t border-yellow-500/20">
+                    <div id="chatMessages" class="h-40 overflow-y-auto thin-scroll p-2.5 flex flex-col gap-1.5 text-xs bg-slate-950/70"></div>
+                    <form id="chatForm" class="p-2 flex items-center gap-1.5 bg-slate-900/90 border-t border-slate-800">
+                        <input id="chatInput" type="text" maxlength="120" placeholder="Gáy với anh em săn hũ..." class="flex-1 bg-slate-950 border border-slate-700 focus:border-yellow-400 focus:outline-none rounded-xl px-3 py-2 text-xs text-white" />
+                        <button type="submit" class="btn-press px-3.5 py-2 rounded-xl bg-amber-500 text-slate-950 font-black text-xs">Gửi</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center text-[10px] text-slate-500 mt-3 px-4">
+            NamKyBet Noel Edition • Game quay hũ giả lập giải trí bằng tiền ảo, không quy đổi tiền thật.
+        </footer>
+    </div>
+
+    <!-- =========================================================
+         FULLSCREEN CELEBRATION OVERLAY (BIG WIN / MEGA WIN / FREE SPINS / JACKPOT)
+    ========================================================= -->
+    <div id="celebrationOverlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 cursor-pointer">
+        <div id="celebrationCard" class="w-full max-w-sm rounded-3xl p-6 text-center border-2 border-yellow-300 shadow-2xl pop-in bg-gradient-to-b from-red-900 via-red-950 to-slate-950">
+            <div id="celEmoji" class="text-6xl mb-2">🎉</div>
+            <div id="celBadge" class="inline-block px-3 py-0.5 rounded-full bg-yellow-400 text-slate-950 text-[11px] font-black uppercase tracking-widest mb-2">
+                BIG WIN
+            </div>
+            <h2 id="celTitle" class="text-2xl sm:text-3xl font-black text-yellow-300 tracking-wide drop-shadow">
+                THẮNG LỚN!
+            </h2>
+            <div id="celAmount" class="text-3xl sm:text-4xl font-black text-emerald-300 my-3 drop-shadow">
+                +0đ
+            </div>
+            <p id="celSub" class="text-xs text-yellow-100/90 font-semibold leading-relaxed">
+                Chạm màn hình để tiếp tục quay!
+            </p>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         PAYTABLE / INFO (?) MODAL
+    ========================================================= -->
+    <div id="paytableModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-3">
+        <div class="w-full max-w-md rounded-3xl bg-gradient-to-b from-slate-900 via-[#0d1936] to-slate-950 border-2 border-yellow-500/75 p-4 shadow-2xl max-h-[88vh] overflow-y-auto thin-scroll">
+            <div class="flex items-center justify-between border-b border-yellow-500/30 pb-2.5">
+                <h2 class="text-base font-black text-yellow-300">🎄 BẢNG TRẢ THƯỞNG (20 DÒNG)</h2>
+                <button id="closePaytableBtn" class="w-8 h-8 rounded-full bg-slate-800 text-slate-300 font-bold">✕</button>
+            </div>
+
+            <!-- Special Symbols -->
+            <div class="mt-3 space-y-2 text-xs">
+                <div class="p-2.5 rounded-2xl bg-amber-950/60 border border-yellow-400/50 flex items-center gap-3">
+                    <span class="text-3xl shrink-0">⭐</span>
+                    <div>
+                        <div class="font-black text-yellow-300">HŨ JACKPOT (Ngôi Sao Vàng)</div>
+                        <div class="text-slate-200 text-[11px] mt-0.5">
+                            5 biểu tượng trên 1 dòng thắng = <b class="text-yellow-300">NỔ HŨ</b> theo phòng cược:
+                            <b>10K–50K</b> ăn <span class="text-emerald-300">MINI</span>, <b>100K–250K</b> ăn <span class="text-cyan-300">MAJOR</span>, <b>500K</b> ăn <span class="text-yellow-300">GRAND</span>. (3 ô: x3 cược, 4 ô: x12.5 cược)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-2.5 rounded-2xl bg-red-950/60 border border-red-400/50 flex items-center gap-3">
+                    <span class="text-3xl shrink-0">🎁</span>
+                    <div>
+                        <div class="font-black text-red-300">SCATTER (Hộp Quà Noel)</div>
+                        <div class="text-slate-200 text-[11px] mt-0.5">
+                            Rơi <b>3+ ô ở bất kỳ vị trí nào</b> (tối đa 1 ô/cột) nhận ngay <b class="text-yellow-300">10 Vòng Quay Miễn Phí</b> kèm nhân hệ số cộng dồn (+5 lượt nếu nổ lại trong Free Spin).
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-2.5 rounded-2xl bg-sky-950/60 border border-cyan-400/50 flex items-center gap-3">
+                    <span class="text-3xl shrink-0">⛄</span>
+                    <div>
+                        <div class="font-black text-cyan-300">WILD (Người Tuyết)</div>
+                        <div class="text-slate-200 text-[11px] mt-0.5">
+                            Thay thế mọi biểu tượng thường để nối dòng thắng (không thay thế Scatter 🎁 & Hũ ⭐).
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regular Symbol Payout Grid -->
+            <div class="mt-3">
+                <div class="text-[11px] font-extrabold text-yellow-200 mb-1.5">Hệ số trả thưởng theo Cược Dòng (Tổng cược / 20):</div>
+                <div id="paytableGrid" class="grid grid-cols-2 gap-1.5 text-[11px]"></div>
+            </div>
+
+            <button id="closePaytableBottomBtn" class="btn-press w-full mt-4 py-2.5 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-950 font-black text-xs">
+                ĐÃ HIỂU & QUAY TIẾP
+            </button>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         SECRET PASSWORD PROMPT MODAL (CLICK "TND" IN TOP-RIGHT)
+    ========================================================= -->
+    <div id="adminPassModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-md p-4">
+        <div id="adminPassBox" class="w-full max-w-xs rounded-3xl bg-slate-950 border-2 border-slate-700 p-5 shadow-2xl pop-in">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-black tracking-widest text-slate-400 uppercase">TND ACCESS</span>
+                <button id="closePassBtn" class="w-7 h-7 rounded-full bg-slate-800 text-slate-400 text-xs font-bold">✕</button>
+            </div>
+            <form id="adminPassForm" class="space-y-3">
+                <input
+                    id="adminPassInput"
+                    type="password"
+                    autocomplete="off"
+                    placeholder="Nhập mật khẩu..."
+                    class="w-full bg-black border border-slate-700 focus:border-yellow-400 focus:outline-none rounded-xl px-3.5 py-2.5 text-sm font-bold text-white"
+                />
+                <div id="adminPassError" class="text-[11px] font-bold text-red-400 hidden">
+                    ❌ Sai mật khẩu truy cập!
+                </div>
+                <button type="submit" class="btn-press w-full py-2.5 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-950 font-black text-xs uppercase tracking-wider">
+                    Xác Nhận
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         SECRET ADMIN CONTROL PANEL (OPENED ONLY WITH "memaybeo123")
+    ========================================================= -->
+    <div id="adminModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/85 backdrop-blur-md p-3">
+        <div class="w-full max-w-md rounded-3xl bg-gradient-to-b from-slate-900 via-zinc-950 to-black border-2 border-yellow-500/85 p-4 shadow-2xl max-h-[92vh] overflow-y-auto thin-scroll">
+            <div class="flex items-start justify-between border-b border-yellow-500/30 pb-2.5 gap-2">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold text-red-400 uppercase tracking-widest">TND BACKDOOR</span>
+                        <span id="adminActiveTag" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-900/90 border border-emerald-400/60 text-emerald-200">
+                            Auto (10% / 35%)
+                        </span>
+                    </div>
+                    <h2 class="text-base font-black text-yellow-400 tracking-wide mt-0.5">
+                        👑 ADMIN CONTROL - NỔ HŨ NOEL
+                    </h2>
+                </div>
+                <button id="closeAdminTopBtn" class="w-8 h-8 rounded-full bg-slate-800 text-slate-300 font-bold shrink-0">✕</button>
+            </div>
+
+            <!-- 1. Force Next Spin Outcome -->
+            <div class="mt-3">
+                <div class="text-xs font-extrabold text-yellow-200 mb-2">🎰 Ép Kết Quả Lượt Quay Tới:</div>
+                <div class="grid grid-cols-1 gap-1.5">
+                    <button data-mode="auto" class="admin-mode-btn btn-press py-2.5 px-3 rounded-xl border text-xs font-extrabold text-left">🤖 Auto (Mặc định theo thuật toán nhà cái)</button>
+                    <button data-mode="jackpot" class="admin-mode-btn btn-press py-2.5 px-3 rounded-xl border text-xs font-extrabold text-left">⭐ Ép NỔ HŨ (5 Ngôi Sao trên Dòng 1)</button>
+                    <button data-mode="scatter" class="admin-mode-btn btn-press py-2.5 px-3 rounded-xl border text-xs font-extrabold text-left">🎁 Ép 3 SCATTER (Vào 10 Free Spins)</button>
+                    <button data-mode="bigwin" class="admin-mode-btn btn-press py-2.5 px-3 rounded-xl border text-xs font-extrabold text-left">🎅 Ép BIG WIN / MEGA WIN (Combo 🎅 + ⛄)</button>
+                    <button data-mode="loss" class="admin-mode-btn btn-press py-2.5 px-3 rounded-xl border text-xs font-extrabold text-left">💀 Ép THUA SẠCH (Không trúng dòng nào)</button>
+                </div>
+
+                <label class="mt-2.5 flex items-center gap-2 text-xs text-slate-300 font-semibold cursor-pointer bg-slate-900/90 p-2 rounded-xl border border-slate-800">
+                    <input id="adminOneShotCheck" type="checkbox" class="w-4 h-4 accent-yellow-400 rounded" checked>
+                    <span>Chỉ ép 1 lượt quay rồi tự quay về Auto</span>
+                </label>
+            </div>
+
+            <!-- 2. Three Independent Tuning Sliders (Low Rig, High Rig, Scatter Rate) -->
+            <div class="mt-3 bg-slate-900/85 p-3 rounded-2xl border border-yellow-500/25 space-y-3">
+                <!-- Low Bet Rigging -->
+                <div>
+                    <div class="flex items-center justify-between text-xs font-extrabold mb-1">
+                        <span class="text-yellow-200">🎯 Tỉ lệ bịp cược nhỏ (&lt; 250K):</span>
+                        <span id="lowRigVal" class="text-emerald-400 text-sm font-black">10%</span>
+                    </div>
+                    <input id="lowRigSlider" type="range" min="0" max="100" value="10" class="w-full accent-emerald-400 cursor-pointer">
+                    <div class="flex justify-between text-[10px] text-slate-400">
+                        <span>0% (Nhả mạnh)</span>
+                        <span>10% (Mặc định)</span>
+                        <span>100%</span>
+                    </div>
+                </div>
+
+                <!-- High Bet Rigging -->
+                <div class="pt-2 border-t border-slate-800">
+                    <div class="flex items-center justify-between text-xs font-extrabold mb-1">
+                        <span class="text-yellow-200">🔥 Tỉ lệ bịp cược to (&gt;= 250K):</span>
+                        <span id="highRigVal" class="text-red-400 text-sm font-black">35%</span>
+                    </div>
+                    <input id="highRigSlider" type="range" min="0" max="100" value="35" class="w-full accent-red-500 cursor-pointer">
+                    <div class="flex justify-between text-[10px] text-slate-400">
+                        <span>0%</span>
+                        <span>35% (Mặc định)</span>
+                        <span>100% (Hút cạn)</span>
+                    </div>
+                </div>
+
+                <!-- Scatter Trigger Rate Slider -->
+                <div class="pt-2 border-t border-slate-800">
+                    <div class="flex items-center justify-between text-xs font-extrabold mb-1">
+                        <span class="text-yellow-200">🎁 Tỉ lệ nổ 3 Scatter (Cược nhỏ):</span>
+                        <span id="scatterRateVal" class="text-amber-300 text-sm font-black">3.5%</span>
+                    </div>
+                    <input id="scatterRateSlider" type="range" min="0" max="20" step="0.5" value="3.5" class="w-full accent-amber-400 cursor-pointer">
+                    <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
+                        <span>0% (Tắt)</span>
+                        <span id="scatterDerivedInfo" class="text-amber-200/90 font-bold">To: 2.0% • FS: 1.5%</span>
+                        <span>20%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Balance Editor -->
+            <div class="mt-3 bg-slate-900/85 p-3 rounded-2xl border border-yellow-500/25">
+                <div class="text-xs font-extrabold text-yellow-200 mb-2">💵 Chỉnh Số Dư Ví:</div>
+                <div class="flex gap-2">
+                    <input id="adminBalInput" type="number" min="0" step="1000" placeholder="Nhập số dư..." class="flex-1 bg-black border border-yellow-500/45 rounded-xl px-3 py-2 text-xs font-bold text-yellow-300 focus:outline-none focus:border-yellow-400" />
+                    <button id="adminSetBalBtn" class="btn-press px-3.5 py-2 rounded-xl bg-yellow-400 text-slate-950 font-black text-xs">Áp Dụng</button>
+                </div>
+                <div class="grid grid-cols-3 gap-1.5 mt-2">
+                    <button id="adminAdd10M" class="btn-press py-2 rounded-xl bg-emerald-900/80 border border-emerald-500/50 text-[11px] font-extrabold text-emerald-200">+10M</button>
+                    <button id="adminAdd100M" class="btn-press py-2 rounded-xl bg-amber-900/80 border border-amber-500/50 text-[11px] font-extrabold text-amber-200">+100M</button>
+                    <button id="adminSetZero" class="btn-press py-2 rounded-xl bg-red-950/90 border border-red-500/50 text-[11px] font-extrabold text-red-300">Reset 0đ</button>
+                </div>
+            </div>
+
+            <button id="hideAdminBtn" class="btn-press w-full mt-4 py-3 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-950 font-black text-xs uppercase tracking-wider">
+                🔒 Đóng & Ẩn Sạch Dấu Vết
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /* =====================================================================
+           NAMKYBET - NỔ HŨ GIÁNG SINH (v2 - PRECISION SCATTER CONTROLLER)
+           100% Single-File | Zero External Media | Web Audio API
+        ===================================================================== */
+        (() => {
+            'use strict';
+
+            /* -----------------------------------------------------------------
+               1. CONSTANTS, SYMBOLS & 20 CLASSIC PAYLINES
+            ----------------------------------------------------------------- */
+            const STORAGE_KEY = 'namkybet_nohu_noel_v2';
+            const ADMIN_PASS = 'memaybeo123';
+            const INITIAL_BALANCE = 20_000_000;   // Vốn khởi điểm 20 củ
+            const BAILOUT_AMOUNT = 10_000_000;    // Báo Nhà +10 củ
+            const HIGH_BET_THRESHOLD = 250_000;   // >= 250K áp dụng bịp đánh to (35% mặc định)
+            const BET_LEVELS = [10_000, 25_000, 50_000, 100_000, 250_000, 500_000];
+            const NUM_LINES = 20;
+
+            const SYMBOLS = {
+                candy:    { id: 'candy',    name: 'Kẹo Gậy',     emoji: '🍭', css: 'sym-candy',    tag: '',        payout: { 3: 4,  4: 15,  5: 50  } },
+                stocking: { id: 'stocking', name: 'Tất Noel',    emoji: '🧦', css: 'sym-stocking', tag: '',        payout: { 3: 5,  4: 20,  5: 60  } },
+                bell:     { id: 'bell',     name: 'Chuông Vàng', emoji: '🔔', css: 'sym-bell',     tag: '',        payout: { 3: 10, 4: 35,  5: 100 } },
+                tree:     { id: 'tree',     name: 'Cây Thông',   emoji: '🎄', css: 'sym-tree',     tag: '',        payout: { 3: 15, 4: 50,  5: 150 } },
+                reindeer: { id: 'reindeer', name: 'Tuần Lộc',    emoji: '🦌', css: 'sym-reindeer', tag: '',        payout: { 3: 25, 4: 80,  5: 250 } },
+                santa:    { id: 'santa',    name: 'Ông Già Noel',emoji: '🎅', css: 'sym-santa',    tag: '',        payout: { 3: 40, 4: 150, 5: 500 } },
+                wild:     { id: 'wild',     name: 'WILD',        emoji: '⛄', css: 'sym-wild',     tag: 'WILD',    tagCss: 'bg-cyan-300 text-slate-950', payout: { 3: 50, 4: 200, 5: 600 } },
+                scatter:  { id: 'scatter',  name: 'SCATTER',     emoji: '🎁', css: 'sym-scatter',  tag: 'SCATTER', tagCss: 'bg-yellow-300 text-red-950', payout: null },
+                jackpot:  { id: 'jackpot',  name: 'HŨ',          emoji: '⭐', css: 'sym-jackpot',  tag: 'HŨ',      tagCss: 'bg-yellow-200 text-amber-950', payout: { 3: 60, 4: 250, 5: 0 } }
+            };
+
+            const REGULAR_IDS = ['candy', 'stocking', 'bell', 'tree', 'reindeer', 'santa'];
+            const ALL_SYMBOL_IDS = Object.keys(SYMBOLS);
+
+            // 20 Classic 5x3 Paylines (row index 0=top, 1=mid, 2=bottom for columns 0..4)
+            const PAYLINES = [
+                [1, 1, 1, 1, 1], // 1: Middle horizontal (Jackpot showcase line)
+                [0, 0, 0, 0, 0], // 2: Top horizontal
+                [2, 2, 2, 2, 2], // 3: Bottom horizontal
+                [0, 1, 2, 1, 0], // 4: V shape
+                [2, 1, 0, 1, 2], // 5: Inverted V
+                [0, 0, 1, 2, 2], // 6: Diagonal step down
+                [2, 2, 1, 0, 0], // 7: Diagonal step up
+                [1, 0, 0, 0, 1], // 8: Top arch
+                [1, 2, 2, 2, 1], // 9: Bottom bowl
+                [1, 0, 1, 2, 1], // 10: Wave 1
+                [1, 2, 1, 0, 1], // 11: Wave 2
+                [0, 1, 1, 1, 0], // 12: Shallow V
+                [2, 1, 1, 1, 2], // 13: Shallow mountain
+                [0, 1, 0, 1, 0], // 14: Upper zigzag
+                [2, 1, 2, 1, 2], // 15: Lower zigzag
+                [1, 1, 0, 1, 1], // 16: Mid peak
+                [1, 1, 2, 1, 1], // 17: Mid dip
+                [0, 2, 0, 2, 0], // 18: Deep W
+                [2, 0, 2, 0, 2], // 19: Deep M
+                [0, 2, 2, 2, 0]  // 20: Deep U
+            ];
+
+            const LINE_COLORS = [
+                '#fde047', '#f43f5e', '#38bdf8', '#4ade80', '#fb923c',
+                '#c084fc', '#2dd4bf', '#facc15', '#f472b6', '#60a5fa'
+            ];
+
+            /**
+             * BASE REEL WEIGHTS (NO SCATTER IN BASE WEIGHTS!)
+             * Removing 'scatter' from base per-cell weights completely eliminates
+             * accidental Scatter floods and guarantees exact Spin-level Scatter probabilities.
+             */
+            const BASE_WEIGHTS = {
+                lowNormal: { candy: 23, stocking: 22, bell: 16.5, tree: 13.5, reindeer: 9, santa: 7, wild: 7.4, jackpot: 1.6 },
+                lowFree:   { candy: 13.5, stocking: 13.5, bell: 16, tree: 16, reindeer: 13.5, santa: 11.5, wild: 14, jackpot: 2.0 },
+                highNormal:{ candy: 28, stocking: 27, bell: 16.5, tree: 12.5, reindeer: 7, santa: 4.5, wild: 3.3, jackpot: 1.2 },
+                highFree:  { candy: 32, stocking: 31, bell: 16.5, tree: 10, reindeer: 5, santa: 2.8, wild: 1.7, jackpot: 1.0 }
+            };
+
+            // Lively Vietnamese Slot Bot Chatter
+            const BOT_NAMES = [
+                'HoangKiet_99', 'LinhXinh_2k8', 'MinhDuc_Q1', 'BaoLong_SG', 'TuanAnh_2k9',
+                'HuySanHu', 'ThaoNoel', 'Cuong500K', 'KhangWild', 'NamKySlot',
+                'PhucScatter', 'DungBaoNha', 'MaiAnh_HN', 'TienAllIn'
+            ];
+
+            const BOT_LINES = [
+                'Đm 2 Hộp Quà 🎁 sáng rực cột 4 cột 5 mà trượt viên thứ 3 cay cú vãi 😂',
+                'Quay gần 30 vòng phòng 50K mới săn được 3 Scatter, mà vào Free Spin nhả x8 ngọt nước thực sự 🎁',
+                'Phòng 250K-500K căng thật anh em ạ, vào được Scatter còn hiếm mà nhả cũng ít nữa 😭',
+                'Ai quay 500K săn hũ GRAND gần 400 củ chưa??',
+                'Phòng 100K nổ Wild ⛄ nối dòng liên tục luôn, húp nhẹ 3 củ rồi',
+                'Cháy túi bấm Báo Nhà làm 10 củ quay tiếp, Noel không ngủ 🏠',
+                'Bản mới chỉnh lại Scatter chuẩn máy slot thật rồi, lúc ra 2 hộp hồi hộp tim đập thình thịch!',
+                'Quay 25K giải trí ăn đều tay mà cứ lên 250K là gãy cầu 😂',
+                'Bật Turbo + Auto ngồi xem tuyết rơi săn hũ chill thực sự ❄️',
+                'Ông già Noel 🎅 ơi nhả 5 ngôi sao ⭐ cho con ăn Tết sớm với!',
+                'Vừa nổ BIG WIN 50K húp 1 củ 2 ấm áp mùa đông 🔥',
+                'Nhớ nha mấy ông, cược nhỏ 10K-100K vào Scatter ăn đậm hơn cược to nhiều!'
+            ];
+
+            /* -----------------------------------------------------------------
+               2. GAME STATE
+            ----------------------------------------------------------------- */
+            const state = {
+                balance: INITIAL_BALANCE,
+                betIndex: 2, // Default 50,000đ
+                lastWin: 0,
+                grid: [
+                    ['candy', 'santa', 'bell'],
+                    ['tree', 'wild', 'stocking'],
+                    ['reindeer', 'jackpot', 'candy'],
+                    ['stocking', 'wild', 'tree'],
+                    ['bell', 'santa', 'reindeer']
+                ],
+                pots: {
+                    mini: 18_542_000,
+                    major: 92_186_000,
+                    grand: 388_450_000
+                },
+                isSpinning: false,
+                autoSpin: false,
+                turbo: false,
+                muted: false,
+                // Free Spins state
+                freeSpinsLeft: 0,
+                fsBetLocked: 50_000,
+                fsMultiplier: 1,
+                fsTotalWin: 0,
+                fsWinCount: 0,
+                // Secret Admin Config
+                admin: {
+                    mode: 'auto',      // 'auto' | 'jackpot' | 'scatter' | 'bigwin' | 'loss'
+                    lowBetRigRate: 10, // Default 10% for < 250K
+                    highBetRigRate: 35,// Default 35% for >= 250K
+                    scatterRate: 3.5,  // Default 3.5% for < 250K (~2.0% high bet, ~1.5% retrigger)
+                    oneShot: true
+                },
+                chatOpen: false
+            };
+
+            let autoTimer = null;
+            let overlayResolver = null;
+            let overlayAutoTimer = null;
+
+            /* -----------------------------------------------------------------
+               3. WEB AUDIO API SOUND ENGINE (ZERO EXTERNAL FILES)
+            ----------------------------------------------------------------- */
+            class SlotAudio {
+                constructor() { this.ctx = null; }
+
+                unlock() {
+                    try {
+                        if (!this.ctx) {
+                            const AC = window.AudioContext || window.webkitAudioContext;
+                            if (AC) this.ctx = new AC();
+                        }
+                        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+                    } catch (_) {}
+                }
+
+                ready() {
+                    if (state.muted) return false;
+                    this.unlock();
+                    return !!this.ctx;
+                }
+
+                playClick() {
+                    if (!this.ready()) return;
+                    const t = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const g = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(1100, t);
+                    osc.frequency.exponentialRampToValueAtTime(520, t + 0.04);
+                    g.gain.setValueAtTime(0.14, t);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.045);
+                    osc.connect(g); g.connect(this.ctx.destination);
+                    osc.start(t); osc.stop(t + 0.05);
+                }
+
+                playSpinTick() {
+                    if (!this.ready()) return;
+                    const t = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const g = this.ctx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(220 + Math.random() * 90, t);
+                    g.gain.setValueAtTime(0.038, t);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
+                    osc.connect(g); g.connect(this.ctx.destination);
+                    osc.start(t); osc.stop(t + 0.035);
+                }
+
+                playReelStop(colIndex) {
+                    if (!this.ready()) return;
+                    const t = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const g = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(175 + colIndex * 18, t);
+                    osc.frequency.exponentialRampToValueAtTime(62, t + 0.085);
+                    g.gain.setValueAtTime(0.22, t);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+                    osc.connect(g); g.connect(this.ctx.destination);
+                    osc.start(t); osc.stop(t + 0.095);
+                }
+
+                playScatterLand(countSoFar) {
+                    if (!this.ready()) return;
+                    const t = this.ctx.currentTime;
+                    const baseFreqs = [587.33, 880, 1174.66, 1396.91, 1760];
+                    const f = baseFreqs[Math.min(countSoFar - 1, baseFreqs.length - 1)] || 880;
+                    const osc = this.ctx.createOscillator();
+                    const g = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(f, t);
+                    osc.frequency.exponentialRampToValueAtTime(f * 1.15, t + 0.16);
+                    g.gain.setValueAtTime(0.24, t);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+                    osc.connect(g); g.connect(this.ctx.destination);
+                    osc.start(t); osc.stop(t + 0.27);
+                }
+
+                // Suspenseful rising synth hum when 2 Scatters are already on board
+                playAnticipationTension() {
+                    if (!this.ready()) return;
+                    const t = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const g = this.ctx.createGain();
+                    osc.type = 'sawtooth';
+                    const filter = this.ctx.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(420, t);
+                    filter.frequency.exponentialRampToValueAtTime(1400, t + 0.55);
+
+                    osc.frequency.setValueAtTime(190, t);
+                    osc.frequency.exponentialRampToValueAtTime(440, t + 0.55);
+                    g.gain.setValueAtTime(0.09, t);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.58);
+
+                    osc.connect(filter);
+                    filter.connect(g);
+                    g.connect(this.ctx.destination);
+                    osc.start(t);
+                    osc.stop(t + 0.6);
+                }
+
+                playWinCoins() {
+                    if (!this.ready()) return;
+                    const t = this.ctx.currentTime;
+                    const notes = [880, 1174.66, 1396.91, 1760];
+                    notes.forEach((f, idx) => {
+                        const osc = this.ctx.createOscillator();
+                        const g = this.ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(f, t + idx * 0.06);
+                        g.gain.setValueAtTime(0.14, t + idx * 0.06);
+                        g.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.06 + 0.18);
+                        osc.connect(g); g.connect(this.ctx.destination);
+                        osc.start(t + idx * 0.06); osc.stop(t + idx * 0.06 + 0.2);
+                    });
+                }
+
+                // Festive Jingle Bells Remix Fanfare (Lead + Punchy Bass Beat)
+                playJingleFanfare() {
+                    if (!this.ready()) return;
+                    const t = this.ctx.currentTime;
+                    const melody = [
+                        { f: 659.25, s: 0.00, d: 0.10 }, { f: 659.25, s: 0.11, d: 0.10 }, { f: 659.25, s: 0.22, d: 0.21 },
+                        { f: 659.25, s: 0.45, d: 0.10 }, { f: 659.25, s: 0.56, d: 0.10 }, { f: 659.25, s: 0.67, d: 0.21 },
+                        { f: 659.25, s: 0.90, d: 0.10 }, { f: 783.99, s: 1.01, d: 0.10 }, { f: 523.25, s: 1.12, d: 0.13 },
+                        { f: 587.33, s: 1.27, d: 0.10 }, { f: 659.25, s: 1.38, d: 0.36 }
+                    ];
+                    melody.forEach(n => {
+                        const osc = this.ctx.createOscillator();
+                        const g = this.ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(n.f, t + n.s);
+                        g.gain.setValueAtTime(0.18, t + n.s);
+                        g.gain.exponentialRampToValueAtTime(0.001, t + n.s + n.d);
+                        osc.connect(g); g.connect(this.ctx.destination);
+                        osc.start(t + n.s); osc.stop(t + n.s + n.d + 0.02);
+                    });
+
+                    // Remix bass pulse under Jingle Bells
+                    [0.0, 0.22, 0.45, 0.67, 0.90, 1.12, 1.38].forEach(beat => {
+                        const kick = this.ctx.createOscillator();
+                        const kg = this.ctx.createGain();
+                        kick.type = 'sine';
+                        kick.frequency.setValueAtTime(145, t + beat);
+                        kick.frequency.exponentialRampToValueAtTime(42, t + beat + 0.11);
+                        kg.gain.setValueAtTime(0.18, t + beat);
+                        kg.gain.exponentialRampToValueAtTime(0.001, t + beat + 0.12);
+                        kick.connect(kg); kg.connect(this.ctx.destination);
+                        kick.start(t + beat); kick.stop(t + beat + 0.13);
+                    });
+                }
+
+                playLoss() {
+                    if (!this.ready()) return;
+                    const t = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const g = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(240, t);
+                    osc.frequency.linearRampToValueAtTime(165, t + 0.18);
+                    g.gain.setValueAtTime(0.075, t);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+                    osc.connect(g); g.connect(this.ctx.destination);
+                    osc.start(t); osc.stop(t + 0.22);
+                }
+            }
+
+            const sfx = new SlotAudio();
+
+            /* -----------------------------------------------------------------
+               4. DOM REFERENCES
+            ----------------------------------------------------------------- */
+            const el = {
+                balanceDisplay: document.getElementById('balanceDisplay'),
+                lastWinDisplay: document.getElementById('lastWinDisplay'),
+                bailoutWrap: document.getElementById('bailoutWrap'),
+                bailoutBtn: document.getElementById('bailoutBtn'),
+                soundBtn: document.getElementById('soundBtn'),
+                paytableBtn: document.getElementById('paytableBtn'),
+                tndLogoBtn: document.getElementById('tndLogoBtn'),
+                potCards: {
+                    mini: document.getElementById('potCard-mini'),
+                    major: document.getElementById('potCard-major'),
+                    grand: document.getElementById('potCard-grand')
+                },
+                potVals: {
+                    mini: document.getElementById('potVal-mini'),
+                    major: document.getElementById('potVal-major'),
+                    grand: document.getElementById('potVal-grand')
+                },
+                freeSpinHud: document.getElementById('freeSpinHud'),
+                fsLeftCount: document.getElementById('fsLeftCount'),
+                fsMultiplierVal: document.getElementById('fsMultiplierVal'),
+                fsTotalWinVal: document.getElementById('fsTotalWinVal'),
+                reels: [0, 1, 2, 3, 4].map(i => document.getElementById(`reel-${i}`)),
+                paylineSvg: document.getElementById('paylineSvg'),
+                winFloatBanner: document.getElementById('winFloatBanner'),
+                winFloatLabel: document.getElementById('winFloatLabel'),
+                winFloatAmount: document.getElementById('winFloatAmount'),
+                statusStrip: document.getElementById('statusStrip'),
+                activePotTag: document.getElementById('activePotTag'),
+                betMinusBtn: document.getElementById('betMinusBtn'),
+                betPlusBtn: document.getElementById('betPlusBtn'),
+                betMaxBtn: document.getElementById('betMaxBtn'),
+                betDisplay: document.getElementById('betDisplay'),
+                betPillsRow: document.getElementById('betPillsRow'),
+                autoBtn: document.getElementById('autoBtn'),
+                autoBtnLabel: document.getElementById('autoBtnLabel'),
+                turboBtn: document.getElementById('turboBtn'),
+                spinBtn: document.getElementById('spinBtn'),
+                spinBtnIcon: document.getElementById('spinBtnIcon'),
+                spinBtnText: document.getElementById('spinBtnText'),
+                // Chat
+                toggleChatBtn: document.getElementById('toggleChatBtn'),
+                chatChevron: document.getElementById('chatChevron'),
+                chatDrawer: document.getElementById('chatDrawer'),
+                chatMessages: document.getElementById('chatMessages'),
+                chatUnreadDot: document.getElementById('chatUnreadDot'),
+                chatForm: document.getElementById('chatForm'),
+                chatInput: document.getElementById('chatInput'),
+                onlineCount: document.getElementById('onlineCount'),
+                // Overlays & Modals
+                toastContainer: document.getElementById('toastContainer'),
+                celebrationOverlay: document.getElementById('celebrationOverlay'),
+                celebrationCard: document.getElementById('celebrationCard'),
+                celEmoji: document.getElementById('celEmoji'),
+                celBadge: document.getElementById('celBadge'),
+                celTitle: document.getElementById('celTitle'),
+                celAmount: document.getElementById('celAmount'),
+                celSub: document.getElementById('celSub'),
+                paytableModal: document.getElementById('paytableModal'),
+                paytableGrid: document.getElementById('paytableGrid'),
+                closePaytableBtn: document.getElementById('closePaytableBtn'),
+                closePaytableBottomBtn: document.getElementById('closePaytableBottomBtn'),
+                // Secret Password & Admin Modals
+                adminPassModal: document.getElementById('adminPassModal'),
+                adminPassBox: document.getElementById('adminPassBox'),
+                adminPassForm: document.getElementById('adminPassForm'),
+                adminPassInput: document.getElementById('adminPassInput'),
+                adminPassError: document.getElementById('adminPassError'),
+                closePassBtn: document.getElementById('closePassBtn'),
+                adminModal: document.getElementById('adminModal'),
+                adminActiveTag: document.getElementById('adminActiveTag'),
+                adminOneShotCheck: document.getElementById('adminOneShotCheck'),
+                lowRigSlider: document.getElementById('lowRigSlider'),
+                lowRigVal: document.getElementById('lowRigVal'),
+                highRigSlider: document.getElementById('highRigSlider'),
+                highRigVal: document.getElementById('highRigVal'),
+                scatterRateSlider: document.getElementById('scatterRateSlider'),
+                scatterRateVal: document.getElementById('scatterRateVal'),
+                scatterDerivedInfo: document.getElementById('scatterDerivedInfo'),
+                adminBalInput: document.getElementById('adminBalInput'),
+                adminSetBalBtn: document.getElementById('adminSetBalBtn'),
+                adminAdd10M: document.getElementById('adminAdd10M'),
+                adminAdd100M: document.getElementById('adminAdd100M'),
+                adminSetZero: document.getElementById('adminSetZero'),
+                closeAdminTopBtn: document.getElementById('closeAdminTopBtn'),
+                hideAdminBtn: document.getElementById('hideAdminBtn')
+            };
+
+            /* -----------------------------------------------------------------
+               5. UTILITIES: CRYPTO RNG, FORMATTERS, STORAGE & TOASTS
+            ----------------------------------------------------------------- */
+            function formatVND(num) {
+                return Math.max(0, Math.floor(Number(num) || 0)).toLocaleString('en-US') + 'đ';
+            }
+
+            function formatNum(num) {
+                return Math.max(0, Math.floor(Number(num) || 0)).toLocaleString('en-US');
+            }
+
+            function getCurrentBet() {
+                return state.freeSpinsLeft > 0 ? state.fsBetLocked : BET_LEVELS[state.betIndex];
+            }
+
+            function getActivePotKey(betAmount) {
+                if (betAmount >= 500_000) return 'grand';
+                if (betAmount >= 100_000) return 'major';
+                return 'mini';
+            }
+
+            function secureFloat() {
+                if (window.crypto && window.crypto.getRandomValues) {
+                    const buf = new Uint32Array(1);
+                    window.crypto.getRandomValues(buf);
+                    return buf[0] / 4294967296;
+                }
+                return Math.random();
+            }
+
+            function secureInt(min, max) {
+                const range = max - min + 1;
+                if (window.crypto && window.crypto.getRandomValues) {
+                    const maxValid = Math.floor(0x100000000 / range) * range;
+                    const buf = new Uint32Array(1);
+                    let r;
+                    do {
+                        window.crypto.getRandomValues(buf);
+                        r = buf[0];
+                    } while (r >= maxValid);
+                    return min + (r % range);
+                }
+                return min + Math.floor(Math.random() * range);
+            }
+
+            function pickWeighted(weightMap) {
+                let total = 0;
+                const entries = [];
+                for (const key in weightMap) {
+                    total += weightMap[key];
+                    entries.push([key, total]);
+                }
+                const r = secureFloat() * total;
+                for (let i = 0; i < entries.length; i++) {
+                    if (r <= entries[i][1]) return entries[i][0];
+                }
+                return entries[entries.length - 1][0];
+            }
+
+            function shuffleArray(arr) {
+                const copy = arr.slice();
+                for (let i = copy.length - 1; i > 0; i--) {
+                    const j = secureInt(0, i);
+                    [copy[i], copy[j]] = [copy[j], copy[i]];
+                }
+                return copy;
+            }
+
+            function showToast(msg, type = 'info', duration = 3000) {
+                const styles = {
+                    info: 'bg-slate-900/95 border-yellow-400/75 text-yellow-100',
+                    win:  'bg-emerald-950/95 border-emerald-400 text-emerald-200',
+                    loss: 'bg-red-950/95 border-red-400 text-red-200',
+                    warn: 'bg-amber-950/95 border-amber-400 text-amber-200'
+                };
+                const div = document.createElement('div');
+                div.className = `pointer-events-auto px-4 py-2.5 rounded-2xl border-2 text-xs font-extrabold shadow-2xl text-center pop-in ${styles[type] || styles.info}`;
+                div.textContent = msg;
+                el.toastContainer.appendChild(div);
+                setTimeout(() => {
+                    div.style.transition = 'opacity 0.28s ease, transform 0.28s ease';
+                    div.style.opacity = '0';
+                    div.style.transform = 'translateY(-10px)';
+                    setTimeout(() => div.remove(), 300);
+                }, duration);
+            }
+
+            function saveState() {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                        balance: state.balance,
+                        betIndex: state.betIndex,
+                        pots: state.pots,
+                        muted: state.muted,
+                        admin: state.admin
+                    }));
+                } catch (_) {}
+            }
+
+            function loadState() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (!raw) return;
+                    const data = JSON.parse(raw);
+                    if (typeof data.balance === 'number' && data.balance >= 0) state.balance = Math.floor(data.balance);
+                    if (typeof data.betIndex === 'number' && data.betIndex >= 0 && data.betIndex < BET_LEVELS.length) {
+                        state.betIndex = data.betIndex;
+                    }
+                    if (data.pots) {
+                        if (data.pots.mini >= 10_000_000) state.pots.mini = Math.floor(data.pots.mini);
+                        if (data.pots.major >= 50_000_000) state.pots.major = Math.floor(data.pots.major);
+                        if (data.pots.grand >= 200_000_000) state.pots.grand = Math.floor(data.pots.grand);
+                    }
+                    if (typeof data.muted === 'boolean') state.muted = data.muted;
+                    if (data.admin) {
+                        if (['auto', 'jackpot', 'scatter', 'bigwin', 'loss'].includes(data.admin.mode)) {
+                            state.admin.mode = data.admin.mode;
+                        }
+                        if (typeof data.admin.lowBetRigRate === 'number') {
+                            state.admin.lowBetRigRate = Math.max(0, Math.min(100, data.admin.lowBetRigRate));
+                        }
+                        if (typeof data.admin.highBetRigRate === 'number') {
+                            state.admin.highBetRigRate = Math.max(0, Math.min(100, data.admin.highBetRigRate));
+                        }
+                        if (typeof data.admin.scatterRate === 'number') {
+                            state.admin.scatterRate = Math.max(0, Math.min(20, data.admin.scatterRate));
+                        }
+                        if (typeof data.admin.oneShot === 'boolean') state.admin.oneShot = data.admin.oneShot;
+                    }
+                } catch (_) {}
+            }
+
+            /* -----------------------------------------------------------------
+               6. PAYLINE EVALUATOR (20 LINES, WILD, SCATTER, JACKPOT)
+            ----------------------------------------------------------------- */
+            function evaluateSingleLine(lineSyms, lineBet, activePotValue) {
+                const first = lineSyms[0];
+                if (first === 'scatter') return null;
+
+                if (first === 'jackpot') {
+                    let count = 1;
+                    while (count < 5 && lineSyms[count] === 'jackpot') count++;
+                    if (count === 5) {
+                        return { symbol: 'jackpot', count: 5, payout: activePotValue, isJackpot: true };
+                    }
+                    if (count >= 3) {
+                        return { symbol: 'jackpot', count, payout: Math.floor(lineBet * SYMBOLS.jackpot.payout[count]), isJackpot: false };
+                    }
+                    return null;
+                }
+
+                let pureWildCount = 0;
+                while (pureWildCount < 5 && lineSyms[pureWildCount] === 'wild') pureWildCount++;
+
+                let targetSym = null;
+                let matchCount = 0;
+                for (let i = 0; i < 5; i++) {
+                    const s = lineSyms[i];
+                    if (s === 'scatter' || s === 'jackpot') break;
+                    if (s === 'wild') {
+                        matchCount++;
+                    } else if (targetSym === null) {
+                        targetSym = s;
+                        matchCount++;
+                    } else if (s === targetSym) {
+                        matchCount++;
+                    } else {
+                        break;
+                    }
+                }
+
+                let best = null;
+                if (pureWildCount >= 3) {
+                    const p = Math.floor(lineBet * SYMBOLS.wild.payout[pureWildCount]);
+                    best = { symbol: 'wild', count: pureWildCount, payout: p, isJackpot: false };
+                }
+                if (targetSym && matchCount >= 3) {
+                    const p = Math.floor(lineBet * SYMBOLS[targetSym].payout[matchCount]);
+                    if (!best || p > best.payout) {
+                        best = { symbol: targetSym, count: matchCount, payout: p, isJackpot: false };
+                    }
+                }
+                return best;
+            }
+
+            function evaluateBoard(grid, betAmount, multiplier = 1) {
+                const lineBet = betAmount / NUM_LINES;
+                const potKey = getActivePotKey(betAmount);
+                const potValue = state.pots[potKey];
+
+                const winningLines = [];
+                let lineWinSum = 0;
+                let jackpotWon = false;
+                let jackpotAmount = 0;
+
+                for (let li = 0; li < PAYLINES.length; li++) {
+                    const coords = PAYLINES[li];
+                    const syms = [
+                        grid[0][coords[0]],
+                        grid[1][coords[1]],
+                        grid[2][coords[2]],
+                        grid[3][coords[3]],
+                        grid[4][coords[4]]
+                    ];
+                    const hit = evaluateSingleLine(syms, lineBet, potValue);
+                    if (hit) {
+                        if (hit.isJackpot) {
+                            jackpotWon = true;
+                            jackpotAmount = potValue;
+                            winningLines.push({ lineIndex: li, coords, count: 5, symbol: 'jackpot', payout: potValue, isJackpot: true });
+                        } else {
+                            const multPay = Math.floor(hit.payout * multiplier);
+                            lineWinSum += multPay;
+                            winningLines.push({ lineIndex: li, coords, count: hit.count, symbol: hit.symbol, payout: multPay, isJackpot: false });
+                        }
+                    }
+                }
+
+                const scatterCoords = [];
+                for (let c = 0; c < 5; c++) {
+                    for (let r = 0; r < 3; r++) {
+                        if (grid[c][r] === 'scatter') scatterCoords.push([c, r]);
+                    }
+                }
+                const scatterCount = scatterCoords.length;
+                let scatterWin = 0;
+                if (scatterCount === 3) scatterWin = betAmount * 1;
+                else if (scatterCount === 4) scatterWin = betAmount * 5;
+                else if (scatterCount >= 5) scatterWin = betAmount * 20;
+
+                const totalWin = lineWinSum + scatterWin + jackpotAmount;
+                return {
+                    winningLines,
+                    lineWinSum,
+                    scatterCount,
+                    scatterCoords,
+                    scatterWin,
+                    jackpotWon,
+                    jackpotKey: potKey,
+                    jackpotAmount,
+                    totalWin
+                };
+            }
+
+            /* -----------------------------------------------------------------
+               7. PRECISION SCATTER CONTROLLER & DUAL-TIER HOUSE RIGGING ENGINE
+            ----------------------------------------------------------------- */
+            /**
+             * Generates a 5x3 base board with ZERO Scatters.
+             * Scatters are injected strictly by injectControlledScatters() afterwards.
+             */
+            function generateBaseWeightedBoard(weightMap) {
+                const grid = [[], [], [], [], []];
+                for (let c = 0; c < 5; c++) {
+                    for (let r = 0; r < 3; r++) {
+                        grid[c][r] = pickWeighted(weightMap);
+                    }
+                }
+                return grid;
+            }
+
+            /**
+             * Guaranteed zero-win board (no paylines, no accidental Scatters, no Jackpot).
+             */
+            function generateDeadBoard() {
+                const col0Pool = ['candy', 'bell', 'reindeer'];
+                const col1Pool = ['stocking', 'tree', 'santa'];
+                const grid = [[], [], [], [], []];
+                for (let r = 0; r < 3; r++) {
+                    grid[0][r] = col0Pool[secureInt(0, col0Pool.length - 1)];
+                    grid[1][r] = col1Pool[secureInt(0, col1Pool.length - 1)];
+                    for (let c = 2; c < 5; c++) {
+                        grid[c][r] = REGULAR_IDS[secureInt(0, REGULAR_IDS.length - 1)];
+                    }
+                }
+                return grid;
+            }
+
+            /**
+             * Tiny consolation tease board ("nhả ít"): strictly > 0 and < 0.4x bet.
+             */
+            function generateTinyTeaseBoard(betAmount, multiplier = 1) {
+                for (let attempt = 0; attempt < 15; attempt++) {
+                    const grid = generateDeadBoard();
+                    const lowSym = secureFloat() < 0.5 ? 'candy' : 'stocking';
+                    const targetRow = secureInt(0, 2);
+                    const safeCol0 = ['bell', 'reindeer'];
+                    const safeCol1 = ['tree', 'santa'];
+
+                    for (let r = 0; r < 3; r++) {
+                        grid[0][r] = safeCol0[secureInt(0, 1)];
+                        grid[1][r] = safeCol1[secureInt(0, 1)];
+                        grid[2][r] = ['bell', 'tree', 'reindeer', 'santa'][secureInt(0, 3)];
+                        grid[3][r] = ['bell', 'tree', 'reindeer', 'santa'][secureInt(0, 3)];
+                        grid[4][r] = ['bell', 'tree', 'reindeer', 'santa'][secureInt(0, 3)];
+                    }
+
+                    grid[0][targetRow] = lowSym;
+                    grid[1][targetRow] = lowSym;
+                    grid[2][targetRow] = lowSym;
+
+                    const check = evaluateBoard(grid, betAmount, multiplier);
+                    if (check.totalWin > 0 && check.totalWin < betAmount * 0.4 && !check.jackpotWon) {
+                        return grid;
+                    }
+                }
+                return generateDeadBoard();
+            }
+
+            /**
+             * Places EXACTLY `count` Scatters onto `grid` with HARD RULE: max 1 Scatter per column!
+             * For 2-Scatter teases, favors placing them within columns 0..3 so anticipation glows on remaining reels.
+             */
+            function injectScattersIntoGrid(grid, count, isTeaseTwo = false) {
+                // Strip any pre-existing scatter just to be 100% sure
+                for (let c = 0; c < 5; c++) {
+                    for (let r = 0; r < 3; r++) {
+                        if (grid[c][r] === 'scatter') grid[c][r] = REGULAR_IDS[secureInt(0, 3)];
+                    }
+                }
+                if (count <= 0) return grid;
+
+                let chosenCols = [];
+                if (count === 2 && isTeaseTwo) {
+                    // Pick 2 distinct columns from [0, 1, 2, 3] (at least 1 reel remains after col 2/3 for suspense!)
+                    const earlyCols = shuffleArray([0, 1, 2, 3]);
+                    chosenCols = earlyCols.slice(0, 2);
+                } else {
+                    chosenCols = shuffleArray([0, 1, 2, 3, 4]).slice(0, Math.min(5, count));
+                }
+
+                chosenCols.forEach(c => {
+                    const row = secureInt(0, 2);
+                    grid[c][row] = 'scatter';
+                });
+                return grid;
+            }
+
+            /**
+             * Computes exact derived Scatter probabilities from state.admin.scatterRate:
+             * - Default state.admin.scatterRate = 3.5%
+             *   -> Low Bet (< 250K):   3.5%
+             *   -> High Bet (>= 250K): 2.0%
+             *   -> Free Spin Retrigger:1.5%
+             *   -> 2-Scatter Tease:    11% (normal) / 7% (Free Spin)
+             */
+            function getScatterProbabilities() {
+                const baseLow = Math.max(0, Math.min(20, Number(state.admin.scatterRate) || 0));
+                const highPct = +(baseLow * (2.0 / 3.5)).toFixed(2);
+                const retriggerPct = +(baseLow * (1.5 / 3.5)).toFixed(2);
+                return { lowPct: baseLow, highPct, retriggerPct };
+            }
+
+            /**
+             * Decides how many Scatters (0, 1, 2, 3, 4, or 5) appear on this spin with exact control.
+             */
+            function rollControlledScatterCount(isHighBet, isFreeSpin) {
+                const { lowPct, highPct, retriggerPct } = getScatterProbabilities();
+                const triggerProb = (isFreeSpin ? retriggerPct : (isHighBet ? highPct : lowPct)) / 100;
+
+                const r = secureFloat();
+
+                // 1. Trigger 3+ Scatters (exact probability: 3.5% low / 2.0% high / 1.5% retrigger)
+                if (r < triggerProb) {
+                    const extra = secureFloat();
+                    if (extra < 0.01) return 5;
+                    if (extra < 0.08) return 4;
+                    return 3;
+                }
+
+                // 2. Dramatic 2-Scatter Tease (~11% on normal spins, ~7% in Free Spins)
+                // Only tease if triggerProb > 0 so setting Scatter to 0% disables it cleanly
+                const teaseProb = triggerProb > 0 ? (isFreeSpin ? 0.07 : 0.11) : 0;
+                if (r < triggerProb + teaseProb) {
+                    return 2;
+                }
+
+                // 3. Single casual Scatter (~14% visual flavor)
+                const singleProb = triggerProb > 0 ? (isFreeSpin ? 0.10 : 0.14) : 0;
+                if (r < triggerProb + teaseProb + singleProb) {
+                    return 1;
+                }
+
+                return 0;
+            }
+
+            function generateJackpotBoard() {
+                const grid = generateDeadBoard();
+                for (let c = 0; c < 5; c++) grid[c][1] = 'jackpot';
+                return grid;
+            }
+
+            function generateBigWinBoard() {
+                const grid = generateBaseWeightedBoard(BASE_WEIGHTS.lowFree);
+                for (let c = 0; c < 5; c++) {
+                    for (let r = 0; r < 3; r++) {
+                        if (grid[c][r] === 'jackpot') grid[c][r] = 'reindeer';
+                    }
+                }
+                grid[0][1] = 'santa';
+                grid[1][1] = 'wild';
+                grid[2][1] = 'santa';
+                grid[3][1] = 'wild';
+                grid[4][1] = 'santa';
+                grid[0][0] = 'santa';
+                grid[2][0] = 'wild';
+                return grid;
+            }
+
+            /**
+             * MASTER SPIN GENERATOR:
+             * 1. Checks Secret Admin overrides first.
+             * 2. Generates the base reel outcome (0 Scatters) using Dual-Tier Rigging:
+             *    - < 250K: 10% rig, generous Free Spins.
+             *    - >= 250K: 35% rig (dead or <0.4x tease), stingier Free Spins.
+             * 3. Applies the Precision Scatter Controller (max 1/col, exact 3.5% / 2.0% / 1.5% rates + 11% 2-Scatter tease).
+             */
+            function computeSpinOutcome(betAmount, isFreeSpin) {
+                const mode = state.admin.mode;
+                const isHighBet = betAmount >= HIGH_BET_THRESHOLD;
+
+                // 1. Secret Admin Overrides
+                if (mode === 'jackpot') return generateJackpotBoard();
+                if (mode === 'scatter') {
+                    const base = isHighBet ? generateDeadBoard() : generateBaseWeightedBoard(BASE_WEIGHTS.lowNormal);
+                    return injectScattersIntoGrid(base, 3, false);
+                }
+                if (mode === 'bigwin') return generateBigWinBoard();
+                if (mode === 'loss')   return generateDeadBoard();
+
+                // 2. Roll Exact Scatter Count for this spin
+                const scatterCount = rollControlledScatterCount(isHighBet, isFreeSpin);
+
+                // 3. Build Base Board (0 Scatters) via Dual-Tier Rigging
+                const lowRigProb  = state.admin.lowBetRigRate / 100;
+                const highRigProb = state.admin.highBetRigRate / 100;
+                let grid;
+
+                if (isHighBet) {
+                    // HIGH BET (>= 250K: 250K or 500K)
+                    if (isFreeSpin) {
+                        // High-bet Free Spins stay tighter than low-bet Free Spins
+                        const fsHighRig = Math.min(0.88, highRigProb + 0.30);
+                        if (secureFloat() < fsHighRig) {
+                            grid = secureFloat() < 0.60
+                                ? generateDeadBoard()
+                                : generateTinyTeaseBoard(betAmount, state.fsMultiplier);
+                        } else {
+                            grid = generateBaseWeightedBoard(BASE_WEIGHTS.highFree);
+                            const ev = evaluateBoard(grid, betAmount, state.fsMultiplier);
+                            if (ev.jackpotWon || ev.totalWin > betAmount * 4.5) {
+                                grid = generateTinyTeaseBoard(betAmount, state.fsMultiplier);
+                            }
+                        }
+                    } else {
+                        // Regular High-Bet Spin: 35% default rig -> dead spin or <0.4x tiny tease
+                        if (secureFloat() < highRigProb) {
+                            grid = secureFloat() < 0.62
+                                ? generateDeadBoard()
+                                : generateTinyTeaseBoard(betAmount, 1);
+                        } else {
+                            grid = generateBaseWeightedBoard(BASE_WEIGHTS.highNormal);
+                            const ev = evaluateBoard(grid, betAmount, 1);
+                            if (ev.jackpotWon && secureFloat() < 0.92) {
+                                grid = generateDeadBoard();
+                            }
+                        }
+                    }
+                } else {
+                    // LOW BET (< 250K: 10K, 25K, 50K, 100K)
+                    if (isFreeSpin) {
+                        // Low-bet Free Spins are juicy and rewarding!
+                        if (secureFloat() < lowRigProb * 0.45) {
+                            grid = generateDeadBoard();
+                        } else {
+                            grid = generateBaseWeightedBoard(BASE_WEIGHTS.lowFree);
+                            const ev = evaluateBoard(grid, betAmount, state.fsMultiplier);
+                            if (ev.totalWin === 0 && secureFloat() < 0.60) {
+                                grid = generateBaseWeightedBoard(BASE_WEIGHTS.lowFree);
+                            }
+                        }
+                    } else {
+                        // Regular Low-Bet Spin: 10% default rig, 90% balanced with Wilds
+                        if (secureFloat() < lowRigProb) {
+                            grid = generateDeadBoard();
+                        } else {
+                            grid = generateBaseWeightedBoard(BASE_WEIGHTS.lowNormal);
+                        }
+                    }
+                }
+
+                // 4. Inject Controlled Scatters (Never overwrite a natural 5-star Jackpot)
+                const preCheck = evaluateBoard(grid, betAmount, isFreeSpin ? state.fsMultiplier : 1);
+                if (!preCheck.jackpotWon && scatterCount > 0) {
+                    injectScattersIntoGrid(grid, scatterCount, scatterCount === 2);
+                }
+
+                return grid;
+            }
+
+            /* -----------------------------------------------------------------
+               8. REELS RENDERING, SVG PAYLINES & UI SYNC
+            ----------------------------------------------------------------- */
+            function createCellHTML(symId, col, row) {
+                const s = SYMBOLS[symId] || SYMBOLS.candy;
+                const tagHtml = s.tag
+                    ? `<span class="symbol-tag ${s.tagCss}">${s.tag}</span>`
+                    : '';
+                return `
+                    <div class="slot-cell ${s.css}" data-col="${col}" data-row="${row}">
+                        <span class="slot-emoji">${s.emoji}</span>
+                        ${tagHtml}
+                    </div>
+                `;
+            }
+
+            function renderColumn(colIndex, colSymbols) {
+                const colEl = el.reels[colIndex];
+                colEl.innerHTML = colSymbols.map((sym, r) => createCellHTML(sym, colIndex, r)).join('');
+            }
+
+            function renderAllReels(grid) {
+                for (let c = 0; c < 5; c++) renderColumn(c, grid[c]);
+            }
+
+            function clearHighlights() {
+                el.paylineSvg.innerHTML = '';
+                document.querySelectorAll('.slot-cell').forEach(cell => {
+                    cell.classList.remove('cell-win', 'cell-dim');
+                });
+                el.reels.forEach(r => r.classList.remove('reel-anticipation'));
+            }
+
+            function drawWinningPaylines(evalResult) {
+                clearHighlights();
+                const hasWin = evalResult.winningLines.length > 0 || evalResult.scatterCount >= 3;
+                if (!hasWin) return;
+
+                document.querySelectorAll('.slot-cell').forEach(cell => cell.classList.add('cell-dim'));
+
+                const maxLinesToDraw = Math.min(evalResult.winningLines.length, 8);
+                for (let i = 0; i < maxLinesToDraw; i++) {
+                    const wl = evalResult.winningLines[i];
+                    const color = wl.isJackpot ? '#fef08a' : LINE_COLORS[wl.lineIndex % LINE_COLORS.length];
+
+                    const pts = wl.coords.map((row, col) => `${col * 100 + 50},${row * 100 + 50}`).join(' ');
+                    const glowLine = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+                    glowLine.setAttribute('points', pts);
+                    glowLine.setAttribute('stroke', color);
+                    glowLine.setAttribute('stroke-width', wl.isJackpot ? '11' : '7');
+                    glowLine.setAttribute('stroke-opacity', '0.35');
+                    glowLine.setAttribute('class', 'payline-path');
+                    el.paylineSvg.appendChild(glowLine);
+
+                    const coreLine = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+                    coreLine.setAttribute('points', pts);
+                    coreLine.setAttribute('stroke', color);
+                    coreLine.setAttribute('stroke-width', wl.isJackpot ? '5' : '3.2');
+                    coreLine.setAttribute('class', 'payline-path');
+                    el.paylineSvg.appendChild(coreLine);
+
+                    for (let c = 0; c < wl.count; c++) {
+                        const cell = el.reels[c].querySelector(`[data-row="${wl.coords[c]}"]`);
+                        if (cell) {
+                            cell.classList.remove('cell-dim');
+                            cell.classList.add('cell-win');
+                        }
+                    }
+                }
+
+                if (evalResult.scatterCount >= 3) {
+                    evalResult.scatterCoords.forEach(([c, r]) => {
+                        const cell = el.reels[c].querySelector(`[data-row="${r}"]`);
+                        if (cell) {
+                            cell.classList.remove('cell-dim');
+                            cell.classList.add('cell-win');
+                        }
+                    });
+                }
+            }
+
+            function triggerWinFloat(amount, label = 'TRÚNG DÒNG!') {
+                el.winFloatLabel.textContent = label;
+                el.winFloatAmount.textContent = `+${formatVND(amount)}`;
+                el.winFloatBanner.classList.remove('hidden', 'win-popup-anim');
+                void el.winFloatBanner.offsetWidth;
+                el.winFloatBanner.classList.add('win-popup-anim');
+            }
+
+            function buildBetPills() {
+                el.betPillsRow.innerHTML = '';
+                BET_LEVELS.forEach((amt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.dataset.idx = idx;
+                    btn.className = 'bet-pill btn-press py-1.5 rounded-lg text-[10px] font-black border transition';
+                    btn.textContent = (amt / 1000) + 'K';
+                    btn.addEventListener('click', () => {
+                        if (state.isSpinning || state.freeSpinsLeft > 0) return;
+                        sfx.playClick();
+                        state.betIndex = idx;
+                        saveState();
+                        renderUI();
+                    });
+                    el.betPillsRow.appendChild(btn);
+                });
+            }
+
+            function buildPaytableModal() {
+                el.paytableGrid.innerHTML = '';
+                const order = ['santa', 'reindeer', 'tree', 'bell', 'stocking', 'candy'];
+                order.forEach(id => {
+                    const s = SYMBOLS[id];
+                    const card = document.createElement('div');
+                    card.className = `p-2 rounded-xl border border-yellow-500/25 ${s.css} flex items-center gap-2`;
+                    card.innerHTML = `
+                        <span class="text-2xl shrink-0">${s.emoji}</span>
+                        <div class="leading-tight">
+                            <div class="font-black text-yellow-200">${s.name}</div>
+                            <div class="text-[10px] text-slate-200 mt-0.5">
+                                3ô: <b>x${s.payout[3]}</b> • 4ô: <b>x${s.payout[4]}</b><br>
+                                5ô: <b class="text-yellow-300">x${s.payout[5]}</b>
+                            </div>
+                        </div>
+                    `;
+                    el.paytableGrid.appendChild(card);
+                });
+            }
+
+            function renderUI() {
+                const bet = getCurrentBet();
+                const activePot = getActivePotKey(bet);
+
+                el.balanceDisplay.textContent = formatVND(state.balance);
+                el.lastWinDisplay.textContent = formatVND(state.lastWin);
+                el.betDisplay.textContent = formatVND(bet);
+                el.soundBtn.textContent = state.muted ? '🔇' : '🔊';
+
+                ['mini', 'major', 'grand'].forEach(key => {
+                    el.potVals[key].textContent = formatNum(state.pots[key]);
+                    if (key === activePot) {
+                        el.potCards[key].classList.add('jackpot-active');
+                        el.potCards[key].classList.remove('jackpot-inactive');
+                    } else {
+                        el.potCards[key].classList.remove('jackpot-active');
+                        el.potCards[key].classList.add('jackpot-inactive');
+                    }
+                });
+                el.activePotTag.textContent = `Hũ: ${activePot.toUpperCase()}`;
+
+                const lockBet = state.isSpinning || state.freeSpinsLeft > 0;
+                el.betMinusBtn.disabled = lockBet || state.betIndex === 0;
+                el.betPlusBtn.disabled = lockBet || state.betIndex === BET_LEVELS.length - 1;
+                el.betMaxBtn.disabled = lockBet;
+
+                document.querySelectorAll('.bet-pill').forEach(btn => {
+                    const idx = parseInt(btn.dataset.idx, 10);
+                    btn.disabled = lockBet;
+                    if (idx === state.betIndex) {
+                        btn.className = 'bet-pill btn-press py-1.5 rounded-lg text-[10px] font-black border bg-yellow-400 text-slate-950 border-yellow-200 shadow';
+                    } else {
+                        btn.className = 'bet-pill btn-press py-1.5 rounded-lg text-[10px] font-black border bg-slate-900/90 text-slate-300 border-slate-700';
+                    }
+                });
+
+                if (state.freeSpinsLeft > 0) {
+                    el.freeSpinHud.classList.remove('hidden');
+                    el.fsLeftCount.textContent = state.freeSpinsLeft;
+                    el.fsMultiplierVal.textContent = `x${state.fsMultiplier}`;
+                    el.fsTotalWinVal.textContent = formatVND(state.fsTotalWin);
+
+                    el.spinBtn.classList.remove('spin-btn-main');
+                    el.spinBtn.classList.add('spin-btn-free');
+                    el.spinBtnIcon.textContent = '🎁';
+                    el.spinBtnText.textContent = `FREE (${state.freeSpinsLeft})`;
+                } else {
+                    el.freeSpinHud.classList.add('hidden');
+                    el.spinBtn.classList.remove('spin-btn-free');
+                    el.spinBtn.classList.add('spin-btn-main');
+                    el.spinBtnIcon.textContent = '🎰';
+                    el.spinBtnText.textContent = state.isSpinning ? 'ĐANG QUAY' : 'QUAY';
+                }
+
+                el.spinBtn.disabled = state.isSpinning;
+
+                if (state.autoSpin) {
+                    el.autoBtn.className = 'btn-press h-14 rounded-2xl bg-emerald-700 border-2 border-emerald-300 text-white font-black text-xs flex flex-col items-center justify-center gap-0.5 shadow-lg';
+                    el.autoBtnLabel.textContent = 'DỪNG';
+                } else {
+                    el.autoBtn.className = 'btn-press h-14 rounded-2xl bg-slate-900/95 border-2 border-slate-700 text-slate-300 font-black text-xs flex flex-col items-center justify-center gap-0.5';
+                    el.autoBtnLabel.textContent = 'AUTO';
+                }
+
+                if (state.turbo) {
+                    el.turboBtn.className = 'btn-press h-14 rounded-2xl bg-amber-600 border-2 border-yellow-200 text-slate-950 font-black text-xs flex flex-col items-center justify-center gap-0.5 shadow-lg';
+                } else {
+                    el.turboBtn.className = 'btn-press h-14 rounded-2xl bg-slate-900/95 border-2 border-slate-700 text-slate-300 font-black text-xs flex flex-col items-center justify-center gap-0.5';
+                }
+
+                if (state.balance < BET_LEVELS[0] && !state.isSpinning && state.freeSpinsLeft === 0) {
+                    el.bailoutWrap.classList.remove('hidden');
+                } else {
+                    el.bailoutWrap.classList.add('hidden');
+                }
+            }
+
+            /* -----------------------------------------------------------------
+               9. CELEBRATION OVERLAYS & GOLDEN COIN RAIN CANVAS
+            ----------------------------------------------------------------- */
+            const coinRain = (() => {
+                const canvas = document.getElementById('coinCanvas');
+                const ctx = canvas.getContext('2d');
+                let coins = [];
+                let active = false;
+                let rafId = null;
+
+                function resize() {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                }
+                window.addEventListener('resize', resize);
+                resize();
+
+                function loop() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    if (!active && coins.length === 0) {
+                        rafId = null;
+                        return;
+                    }
+                    if (active && coins.length < 75) {
+                        coins.push({
+                            x: Math.random() * canvas.width,
+                            y: -20 - Math.random() * 80,
+                            vy: 4 + Math.random() * 5,
+                            vx: (Math.random() - 0.5) * 3,
+                            r: 10 + Math.random() * 7,
+                            spin: Math.random() * Math.PI * 2,
+                            vSpin: 0.12 + Math.random() * 0.15
+                        });
+                    }
+                    for (let i = coins.length - 1; i >= 0; i--) {
+                        const c = coins[i];
+                        c.x += c.vx;
+                        c.y += c.vy;
+                        c.vy += 0.14;
+                        c.spin += c.vSpin;
+
+                        const scaleX = Math.max(0.2, Math.abs(Math.cos(c.spin)));
+                        ctx.save();
+                        ctx.translate(c.x, c.y);
+                        ctx.scale(scaleX, 1);
+                        ctx.beginPath();
+                        ctx.arc(0, 0, c.r, 0, Math.PI * 2);
+                        ctx.fillStyle = '#facc15';
+                        ctx.fill();
+                        ctx.lineWidth = 2.5;
+                        ctx.strokeStyle = '#b45309';
+                        ctx.stroke();
+                        ctx.fillStyle = '#fef08a';
+                        ctx.font = `900 ${Math.floor(c.r * 1.1)}px sans-serif`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('★', 0, 1);
+                        ctx.restore();
+
+                        if (c.y > canvas.height + 30) coins.splice(i, 1);
+                    }
+                    rafId = requestAnimationFrame(loop);
+                }
+
+                return {
+                    start() { active = true; if (!rafId) loop(); },
+                    stop() { active = false; }
+                };
+            })();
+
+            function showCelebration({ emoji, badge, title, amountText, sub, theme = 'bigwin', autoCloseMs = 3000 }) {
+                return new Promise(resolve => {
+                    if (overlayAutoTimer) clearTimeout(overlayAutoTimer);
+                    overlayResolver = resolve;
+
+                    const themeClasses = {
+                        bigwin:  'from-red-800 via-red-950 to-slate-950 border-yellow-300',
+                        megawin: 'from-amber-600 via-red-900 to-slate-950 border-yellow-200',
+                        freespin:'from-emerald-800 via-red-950 to-slate-950 border-yellow-300',
+                        jackpot: 'from-yellow-500 via-red-800 to-slate-950 border-yellow-100'
+                    };
+                    el.celebrationCard.className = `w-full max-w-sm rounded-3xl p-6 text-center border-2 shadow-2xl pop-in bg-gradient-to-b ${themeClasses[theme] || themeClasses.bigwin}`;
+                    el.celEmoji.textContent = emoji;
+                    el.celBadge.textContent = badge;
+                    el.celTitle.textContent = title;
+                    el.celAmount.textContent = amountText;
+                    el.celSub.textContent = sub;
+
+                    el.celebrationOverlay.classList.remove('hidden');
+                    el.celebrationOverlay.classList.add('flex');
+                    coinRain.start();
+
+                    overlayAutoTimer = setTimeout(dismissCelebration, autoCloseMs);
+                });
+            }
+
+            function dismissCelebration() {
+                if (overlayAutoTimer) {
+                    clearTimeout(overlayAutoTimer);
+                    overlayAutoTimer = null;
+                }
+                el.celebrationOverlay.classList.add('hidden');
+                el.celebrationOverlay.classList.remove('flex');
+                coinRain.stop();
+                if (overlayResolver) {
+                    const fn = overlayResolver;
+                    overlayResolver = null;
+                    fn();
+                }
+            }
+
+            /* -----------------------------------------------------------------
+               10. MAIN SPIN LIFECYCLE (STAGGERED REELS, 2-SCATTER ANTICIPATION)
+            ----------------------------------------------------------------- */
+            function clearAutoTimer() {
+                if (autoTimer) {
+                    clearTimeout(autoTimer);
+                    autoTimer = null;
+                }
+            }
+
+            async function executeSpin() {
+                sfx.unlock();
+                if (state.isSpinning) return;
+                clearAutoTimer();
+
+                const isFreeSpin = state.freeSpinsLeft > 0;
+                const bet = getCurrentBet();
+
+                if (!isFreeSpin) {
+                    if (state.balance < bet) {
+                        state.autoSpin = false;
+                        renderUI();
+                        if (state.balance < BET_LEVELS[0]) {
+                            showToast('Cháy túi rồi! Bấm nút BÁO NHÀ để xin 10 củ ăn Noel nhé 🏠', 'loss', 2800);
+                        } else {
+                            showToast(`Không đủ tiền quay mức ${formatVND(bet)}! Giảm mức cược nhé.`, 'warn', 2400);
+                        }
+                        return;
+                    }
+                    state.balance -= bet;
+                    state.pots.mini  += Math.floor(bet * 0.015);
+                    state.pots.major += Math.floor(bet * 0.025);
+                    state.pots.grand += Math.floor(bet * 0.04);
+                } else {
+                    state.freeSpinsLeft--;
+                }
+
+                state.isSpinning = true;
+                clearHighlights();
+                el.statusStrip.textContent = isFreeSpin
+                    ? `🎁 Đang quay Free Spin (Hệ số x${state.fsMultiplier})...`
+                    : `🎰 Đang quay mức ${formatVND(bet)}...`;
+                renderUI();
+
+                // 1. Compute controlled 5x3 target grid
+                const targetGrid = computeSpinOutcome(bet, isFreeSpin);
+
+                if (state.admin.oneShot && state.admin.mode !== 'auto') {
+                    state.admin.mode = 'auto';
+                }
+
+                // 2. Start spinning blur animation on all 5 reels
+                const spinIntervals = [];
+                for (let c = 0; c < 5; c++) {
+                    el.reels[c].classList.add('reel-spinning');
+                    el.reels[c].classList.remove('reel-landed');
+                    const iv = setInterval(() => {
+                        const randCol = [
+                            ALL_SYMBOL_IDS[secureInt(0, ALL_SYMBOL_IDS.length - 1)],
+                            ALL_SYMBOL_IDS[secureInt(0, ALL_SYMBOL_IDS.length - 1)],
+                            ALL_SYMBOL_IDS[secureInt(0, ALL_SYMBOL_IDS.length - 1)]
+                        ];
+                        renderColumn(c, randCol);
+                    }, state.turbo ? 55 : 72);
+                    spinIntervals.push(iv);
+                }
+
+                const tickIv = setInterval(() => sfx.playSpinTick(), state.turbo ? 75 : 105);
+
+                // 3. Staggered left-to-right stopping with dramatic 2-Scatter anticipation!
+                const baseDelay = state.turbo ? 210 : 460;
+                const stepDelay = state.turbo ? 115 : 260;
+                let scattersLanded = 0;
+
+                await new Promise(resolve => {
+                    let currentDelay = baseDelay;
+                    let anticipated = false;
+
+                    for (let c = 0; c < 5; c++) {
+                        ((colIdx, delayMs) => {
+                            setTimeout(() => {
+                                clearInterval(spinIntervals[colIdx]);
+                                el.reels[colIdx].classList.remove('reel-spinning', 'reel-anticipation');
+                                renderColumn(colIdx, targetGrid[colIdx]);
+                                el.reels[colIdx].classList.add('reel-landed');
+                                sfx.playReelStop(colIdx);
+
+                                if (targetGrid[colIdx].includes('scatter')) {
+                                    scattersLanded++;
+                                    sfx.playScatterLand(scattersLanded);
+
+                                    // Activate dramatic glow + tension audio if 2 Scatters hit before final column
+                                    if (scattersLanded === 2 && colIdx < 4) {
+                                        for (let rem = colIdx + 1; rem < 5; rem++) {
+                                            el.reels[rem].classList.add('reel-anticipation');
+                                        }
+                                        sfx.playAnticipationTension();
+                                        el.statusStrip.textContent = '🔥 Đã có 2 Hộp Quà 🎁! Hồi hộp chờ hộp thứ 3!!';
+                                    }
+                                }
+
+                                if (colIdx === 4) {
+                                    clearInterval(tickIv);
+                                    resolve();
+                                }
+                            }, delayMs);
+                        })(c, currentDelay);
+
+                        const soFar = targetGrid.slice(0, c + 1).filter(col => col.includes('scatter')).length;
+                        if (soFar >= 2 && !anticipated && !state.turbo) {
+                            anticipated = true;
+                            currentDelay += stepDelay + 340; // Extra suspense delay for next column!
+                        } else if (anticipated && !state.turbo) {
+                            currentDelay += stepDelay + 180;
+                        } else {
+                            currentDelay += stepDelay;
+                        }
+                    }
+                });
+
+                // 4. Evaluate Board & Credit Winnings
+                state.grid = targetGrid;
+                const activeMult = isFreeSpin ? state.fsMultiplier : 1;
+                const res = evaluateBoard(targetGrid, bet, activeMult);
+
+                state.balance += res.totalWin;
+                state.lastWin = res.totalWin;
+
+                if (isFreeSpin) {
+                    state.fsTotalWin += res.totalWin;
+                    if (res.totalWin > 0) {
+                        state.fsWinCount++;
+                        const isHighBet = bet >= HIGH_BET_THRESHOLD;
+                        if (isHighBet) {
+                            // High-bet Free Spins: slow & low capped multiplier (max x3)
+                            if (state.fsWinCount % 2 === 0 && state.fsMultiplier < 3) {
+                                state.fsMultiplier++;
+                            }
+                        } else {
+                            // Low-bet Free Spins: juicy escalating multiplier (x2 -> x3 -> x5 -> x8 -> x10 -> x12)
+                            const steps = [2, 3, 5, 6, 8, 10, 12];
+                            const nextIdx = Math.min(steps.length - 1, state.fsWinCount);
+                            state.fsMultiplier = steps[nextIdx];
+                        }
+                    }
+                }
+
+                if (res.jackpotWon) {
+                    if (res.jackpotKey === 'mini')  state.pots.mini  = 15_000_000;
+                    if (res.jackpotKey === 'major') state.pots.major = 80_000_000;
+                    if (res.jackpotKey === 'grand') state.pots.grand = 300_000_000;
+                }
+
+                drawWinningPaylines(res);
+                saveState();
+                renderUI();
+
+                // 5. Audio, Status & Celebrations
+                if (res.jackpotWon) {
+                    sfx.playJingleFanfare();
+                    el.statusStrip.textContent = `👑 NỔ HŨ ${res.jackpotKey.toUpperCase()} +${formatVND(res.totalWin)}!!`;
+                    postBotEvent(`Á đù có đại gia vừa NỔ HŨ ${res.jackpotKey.toUpperCase()} húp ${formatVND(res.totalWin)} kìa trời ơi!! 👑🔥`);
+                    await showCelebration({
+                        emoji: '👑⭐🎄',
+                        badge: `NỔ HŨ ${res.jackpotKey.toUpperCase()}`,
+                        title: 'NỔ HŨ GIÁNG SINH!!',
+                        amountText: `+${formatVND(res.totalWin)}`,
+                        sub: 'Chúc mừng bạn đã đập vỡ Hũ Noel! Chạm màn hình để tiếp tục.',
+                        theme: 'jackpot',
+                        autoCloseMs: 4800
+                    });
+                } else if (res.totalWin >= bet * 15) {
+                    sfx.playJingleFanfare();
+                    el.statusStrip.textContent = `🔥 MEGA WIN! Trúng ${res.winningLines.length} dòng: +${formatVND(res.totalWin)}`;
+                    await showCelebration({
+                        emoji: '🎅🔥',
+                        badge: 'MEGA WIN',
+                        title: 'SIÊU NỔ CẦU!',
+                        amountText: `+${formatVND(res.totalWin)}`,
+                        sub: `Trúng ${res.winningLines.length} dòng trả thưởng rực rỡ!`,
+                        theme: 'megawin',
+                        autoCloseMs: 3600
+                    });
+                } else if (res.totalWin >= bet * 5) {
+                    sfx.playJingleFanfare();
+                    el.statusStrip.textContent = `🎉 BIG WIN! Trúng ${res.winningLines.length} dòng: +${formatVND(res.totalWin)}`;
+                    await showCelebration({
+                        emoji: '🎄💰',
+                        badge: 'BIG WIN',
+                        title: 'THẮNG LỚN!',
+                        amountText: `+${formatVND(res.totalWin)}`,
+                        sub: `Trúng ${res.winningLines.length} dòng cực cháy mùa Noel!`,
+                        theme: 'bigwin',
+                        autoCloseMs: 3000
+                    });
+                } else if (res.totalWin > 0) {
+                    sfx.playWinCoins();
+                    const multTag = isFreeSpin ? ` (x${activeMult})` : '';
+                    el.statusStrip.textContent = `✨ Trúng ${res.winningLines.length} dòng${multTag}: +${formatVND(res.totalWin)}`;
+                    triggerWinFloat(res.totalWin, res.totalWin < bet * 0.4 ? 'GỠ NHẸ!' : `TRÚNG ${res.winningLines.length} DÒNG!`);
+                } else {
+                    sfx.playLoss();
+                    if (res.scatterCount === 2) {
+                        el.statusStrip.textContent = '😭 Hụt mất 1 Hộp Quà 🎁 nữa thôi là vào Free Spin rồi!';
+                    } else {
+                        el.statusStrip.textContent = isFreeSpin
+                            ? '❄️ Chưa trúng lượt Free Spin này, tiếp tục quay nào!'
+                            : '❄️ Chúc bạn may mắn ở lượt quay tiếp theo!';
+                    }
+                }
+
+                // 6. Handle Scatter Trigger / Retrigger (3+ Scatters)
+                if (res.scatterCount >= 3) {
+                    sfx.playJingleFanfare();
+                    if (!isFreeSpin) {
+                        state.fsBetLocked = bet;
+                        state.freeSpinsLeft = 10;
+                        state.fsTotalWin = res.scatterWin;
+                        state.fsWinCount = 0;
+                        state.fsMultiplier = bet >= HIGH_BET_THRESHOLD ? 1 : 2;
+                        renderUI();
+                        postBotEvent(`Nổ ${res.scatterCount} Hộp Quà 🎁 vào 10 Vòng Quay Miễn Phí rồi anh em ơi!`);
+                        await showCelebration({
+                            emoji: '🎁🎄',
+                            badge: `${res.scatterCount} SCATTER`,
+                            title: '10 FREE SPINS!',
+                            amountText: `+${formatVND(res.scatterWin)}`,
+                            sub: `Nhận ngay 10 Vòng Quay Miễn Phí (Mức ${formatVND(bet)}) với hệ số nhân cộng dồn!`,
+                            theme: 'freespin',
+                            autoCloseMs: 3500
+                        });
+                    } else {
+                        state.freeSpinsLeft += 5;
+                        renderUI();
+                        await showCelebration({
+                            emoji: '🎁✨',
+                            badge: 'RETRIGGER HIẾM!',
+                            title: '+5 FREE SPINS!',
+                            amountText: `+${formatVND(res.scatterWin)}`,
+                            sub: 'Cực đỏ! Bạn nổ lại 3 Scatter và nhận thêm 5 lượt quay miễn phí!',
+                            theme: 'freespin',
+                            autoCloseMs: 2800
+                        });
+                    }
+                }
+
+                // 7. Handle Free Spins Finale Summary
+                if (isFreeSpin && state.freeSpinsLeft === 0) {
+                    const summaryTotal = state.fsTotalWin;
+                    sfx.playJingleFanfare();
+                    await showCelebration({
+                        emoji: '🎅🎁',
+                        badge: 'HOÀN THÀNH FREE SPINS',
+                        title: 'TỔNG THƯỞNG NOEL',
+                        amountText: `+${formatVND(summaryTotal)}`,
+                        sub: summaryTotal > bet * 10
+                            ? 'Húp đậm mùa Giáng Sinh rồi! Chạm màn hình để quay tiếp.'
+                            : 'Hoàn thành chuỗi vòng quay miễn phí!',
+                        theme: summaryTotal >= bet * 15 ? 'megawin' : 'freespin',
+                        autoCloseMs: 3800
+                    });
+                    state.fsTotalWin = 0;
+                    state.fsMultiplier = 1;
+                    state.fsWinCount = 0;
+                }
+
+                state.isSpinning = false;
+                saveState();
+                renderUI();
+
+                // 8. Continue Free Spins or Auto Spin
+                if (state.freeSpinsLeft > 0) {
+                    autoTimer = setTimeout(() => executeSpin(), state.turbo ? 500 : 1050);
+                } else if (state.autoSpin) {
+                    if (state.balance >= getCurrentBet()) {
+                        autoTimer = setTimeout(() => executeSpin(), state.turbo ? 480 : 1150);
+                    } else {
+                        state.autoSpin = false;
+                        renderUI();
+                        showToast('Đã tự động tắt AUTO do không đủ số dư!', 'warn', 2400);
+                    }
+                }
+            }
+
+            /* -----------------------------------------------------------------
+               11. BÁO NHÀ, SECRET "TND" PASSWORD & ADMIN CONTROL PANEL
+            ----------------------------------------------------------------- */
+            function handleBailout() {
+                sfx.unlock();
+                if (state.balance >= BET_LEVELS[0] || state.isSpinning || state.freeSpinsLeft > 0) return;
+                state.balance += BAILOUT_AMOUNT;
+                sfx.playJingleFanfare();
+                saveState();
+                renderUI();
+                showToast('🎅 Bố mẹ vừa bán mảnh đất Củ Chi gửi thêm 10 củ ăn Noel!', 'win', 4500);
+            }
+
+            function openPassModal() {
+                el.adminPassInput.value = '';
+                el.adminPassError.classList.add('hidden');
+                el.adminPassModal.classList.remove('hidden');
+                el.adminPassModal.classList.add('flex');
+                setTimeout(() => el.adminPassInput.focus(), 80);
+            }
+
+            function closePassModal() {
+                el.adminPassModal.classList.add('hidden');
+                el.adminPassModal.classList.remove('flex');
+                el.adminPassInput.value = '';
+            }
+
+            function syncAdminPanelUI() {
+                document.querySelectorAll('.admin-mode-btn').forEach(btn => {
+                    const active = btn.dataset.mode === state.admin.mode;
+                    btn.className = active
+                        ? 'admin-mode-btn btn-press py-2.5 px-3 rounded-xl border-2 text-xs font-black text-left bg-yellow-400 text-slate-950 border-yellow-200 shadow'
+                        : 'admin-mode-btn btn-press py-2.5 px-3 rounded-xl border text-xs font-extrabold text-left bg-slate-900 text-slate-300 border-slate-700';
+                });
+
+                const labels = {
+                    auto: `Auto (${state.admin.lowBetRigRate}% / ${state.admin.highBetRigRate}%)`,
+                    jackpot: 'Đang ép: NỔ HŨ ⭐',
+                    scatter: 'Đang ép: 3 SCATTER 🎁',
+                    bigwin:  'Đang ép: BIG WIN 🎅',
+                    loss:    'Đang ép: THUA SẠCH 💀'
+                };
+                el.adminActiveTag.textContent = labels[state.admin.mode] || 'Auto';
+                el.adminActiveTag.className = state.admin.mode === 'auto'
+                    ? 'text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-900/90 border border-emerald-400/60 text-emerald-200'
+                    : 'text-[10px] font-black px-2 py-0.5 rounded-full bg-red-900/90 border border-red-400 text-yellow-200';
+
+                el.adminOneShotCheck.checked = state.admin.oneShot;
+                el.lowRigSlider.value = state.admin.lowBetRigRate;
+                el.lowRigVal.textContent = `${state.admin.lowBetRigRate}%`;
+                el.highRigSlider.value = state.admin.highBetRigRate;
+                el.highRigVal.textContent = `${state.admin.highBetRigRate}%`;
+
+                // Sync Scatter rate slider + live derived High-Bet & Retrigger rates
+                const { lowPct, highPct, retriggerPct } = getScatterProbabilities();
+                el.scatterRateSlider.value = lowPct;
+                el.scatterRateVal.textContent = `${lowPct.toFixed(1)}%`;
+                el.scatterDerivedInfo.textContent = `To: ${highPct.toFixed(1)}% • FS: ${retriggerPct.toFixed(1)}%`;
+
+                el.adminBalInput.value = state.balance;
+            }
+
+            function openAdminPanel() {
+                syncAdminPanelUI();
+                el.adminModal.classList.remove('hidden');
+                el.adminModal.classList.add('flex');
+                sfx.playClick();
+            }
+
+            function closeAdminPanel() {
+                el.adminModal.classList.add('hidden');
+                el.adminModal.classList.remove('flex');
+                saveState();
+                renderUI();
+            }
+
+            /* -----------------------------------------------------------------
+               12. LIVE FAKE BOT CHAT & LIVE TICKING JACKPOT POTS
+            ----------------------------------------------------------------- */
+            function appendChat(name, text, isMe = false) {
+                const row = document.createElement('div');
+                row.className = 'leading-snug break-words';
+                row.innerHTML = `<span class="${isMe ? 'text-yellow-300 font-black' : 'text-cyan-300 font-bold'}"></span> <span class="text-slate-200"></span>`;
+                row.children[0].textContent = `${name}:`;
+                row.children[1].textContent = text;
+                el.chatMessages.appendChild(row);
+                while (el.chatMessages.children.length > 35) el.chatMessages.removeChild(el.chatMessages.firstChild);
+                el.chatMessages.scrollTop = el.chatMessages.scrollHeight;
+                if (!state.chatOpen && !isMe) el.chatUnreadDot.classList.remove('hidden');
+            }
+
+            function postBotEvent(msg) {
+                const bot = BOT_NAMES[secureInt(0, BOT_NAMES.length - 1)];
+                appendChat(bot, msg);
+            }
+
+            function startAmbientLoops() {
+                setInterval(() => {
+                    state.pots.mini  += secureInt(150, 950);
+                    state.pots.major += secureInt(600, 2800);
+                    state.pots.grand += secureInt(1500, 7500);
+                    el.potVals.mini.textContent  = formatNum(state.pots.mini);
+                    el.potVals.major.textContent = formatNum(state.pots.major);
+                    el.potVals.grand.textContent = formatNum(state.pots.grand);
+                }, 1400);
+
+                appendChat('HoangKiet_99', 'Phòng Noel mới cân bằng lại Scatter chuẩn như sòng thật luôn 🎄');
+                appendChat('LinhXinh_2k8', 'Mới trượt 2 Hộp Quà 🎁 cột 5 mà tim đập thình thịch 😂');
+                appendChat('Cuong500K', 'Lên 250K-500K săn Hũ GRAND căng lắm, anh em cân đối vốn nha!');
+
+                const nextBot = () => {
+                    setTimeout(() => {
+                        appendChat(
+                            BOT_NAMES[secureInt(0, BOT_NAMES.length - 1)],
+                            BOT_LINES[secureInt(0, BOT_LINES.length - 1)]
+                        );
+                        el.onlineCount.textContent = String(secureInt(480, 615));
+                        nextBot();
+                    }, secureInt(5200, 9200));
+                };
+                nextBot();
+            }
+
+            /* -----------------------------------------------------------------
+               13. LIGHTWEIGHT ANIMATED SNOWFALL CANVAS
+            ----------------------------------------------------------------- */
+            function initSnowCanvas() {
+                const canvas = document.getElementById('snowCanvas');
+                const ctx = canvas.getContext('2d');
+                let w = 0, h = 0, flakes = [];
+
+                function resize() {
+                    w = canvas.width = window.innerWidth;
+                    h = canvas.height = window.innerHeight;
+                    const count = Math.min(64, Math.max(30, Math.floor(w / 12)));
+                    flakes = Array.from({ length: count }, () => ({
+                        x: Math.random() * w,
+                        y: Math.random() * h,
+                        r: Math.random() * 2.4 + 0.8,
+                        vy: Math.random() * 0.8 + 0.3,
+                        vx: (Math.random() - 0.5) * 0.4,
+                        phase: Math.random() * Math.PI * 2,
+                        a: Math.random() * 0.55 + 0.2
+                    }));
+                }
+
+                function tick() {
+                    ctx.clearRect(0, 0, w, h);
+                    for (let i = 0; i < flakes.length; i++) {
+                        const f = flakes[i];
+                        f.y += f.vy;
+                        f.phase += 0.012;
+                        f.x += Math.sin(f.phase) * 0.4 + f.vx;
+                        if (f.y > h + 5) { f.y = -5; f.x = Math.random() * w; }
+                        if (f.x > w + 5) f.x = -5;
+                        if (f.x < -5) f.x = w + 5;
+                        ctx.beginPath();
+                        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(255,255,255,${f.a})`;
+                        ctx.fill();
+                    }
+                    requestAnimationFrame(tick);
+                }
+
+                window.addEventListener('resize', resize);
+                resize();
+                tick();
+            }
+
+            /* -----------------------------------------------------------------
+               14. EVENT LISTENERS & INITIALIZATION
+            ----------------------------------------------------------------- */
+            function bindEvents() {
+                window.addEventListener('pointerdown', () => sfx.unlock(), { once: true });
+
+                el.spinBtn.addEventListener('click', executeSpin);
+
+                el.betMinusBtn.addEventListener('click', () => {
+                    if (state.isSpinning || state.freeSpinsLeft > 0 || state.betIndex <= 0) return;
+                    sfx.playClick();
+                    state.betIndex--;
+                    saveState();
+                    renderUI();
+                });
+
+                el.betPlusBtn.addEventListener('click', () => {
+                    if (state.isSpinning || state.freeSpinsLeft > 0 || state.betIndex >= BET_LEVELS.length - 1) return;
+                    sfx.playClick();
+                    state.betIndex++;
+                    saveState();
+                    renderUI();
+                });
+
+                el.betMaxBtn.addEventListener('click', () => {
+                    if (state.isSpinning || state.freeSpinsLeft > 0) return;
+                    sfx.playClick();
+                    state.betIndex = BET_LEVELS.length - 1;
+                    saveState();
+                    renderUI();
+                    showToast('👑 Đã bật Cược MAX 500K — Sẵn sàng săn Hũ GRAND!', 'info', 2000);
+                });
+
+                el.autoBtn.addEventListener('click', () => {
+                    sfx.playClick();
+                    state.autoSpin = !state.autoSpin;
+                    renderUI();
+                    if (state.autoSpin && !state.isSpinning) {
+                        executeSpin();
+                    } else if (!state.autoSpin && state.freeSpinsLeft === 0) {
+                        clearAutoTimer();
+                    }
+                });
+
+                el.turboBtn.addEventListener('click', () => {
+                    sfx.playClick();
+                    state.turbo = !state.turbo;
+                    renderUI();
+                    showToast(state.turbo ? '⚡ Đã bật quay nhanh TURBO!' : 'Đã tắt TURBO', 'info', 1400);
+                });
+
+                el.soundBtn.addEventListener('click', () => {
+                    state.muted = !state.muted;
+                    if (!state.muted) sfx.playClick();
+                    saveState();
+                    renderUI();
+                });
+
+                el.bailoutBtn.addEventListener('click', handleBailout);
+                el.celebrationOverlay.addEventListener('click', dismissCelebration);
+
+                // Paytable Modal
+                el.paytableBtn.addEventListener('click', () => {
+                    sfx.playClick();
+                    el.paytableModal.classList.remove('hidden');
+                    el.paytableModal.classList.add('flex');
+                });
+                const closePaytable = () => {
+                    el.paytableModal.classList.add('hidden');
+                    el.paytableModal.classList.remove('flex');
+                };
+                el.closePaytableBtn.addEventListener('click', closePaytable);
+                el.closePaytableBottomBtn.addEventListener('click', closePaytable);
+
+                // Secret "TND" Logo -> Password Modal -> Admin Control Panel
+                el.tndLogoBtn.addEventListener('click', openPassModal);
+                el.closePassBtn.addEventListener('click', closePassModal);
+
+                el.adminPassForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    if (el.adminPassInput.value === ADMIN_PASS) {
+                        closePassModal();
+                        openAdminPanel();
+                    } else {
+                        el.adminPassError.classList.remove('hidden');
+                        el.adminPassBox.classList.remove('shake-error');
+                        void el.adminPassBox.offsetWidth;
+                        el.adminPassBox.classList.add('shake-error');
+                        el.adminPassInput.value = '';
+                        el.adminPassInput.focus();
+                    }
+                });
+
+                // Admin Panel Controls
+                document.querySelectorAll('.admin-mode-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        state.admin.mode = btn.dataset.mode;
+                        syncAdminPanelUI();
+                        saveState();
+                    });
+                });
+
+                el.adminOneShotCheck.addEventListener('change', () => {
+                    state.admin.oneShot = el.adminOneShotCheck.checked;
+                    saveState();
+                });
+
+                el.lowRigSlider.addEventListener('input', () => {
+                    state.admin.lowBetRigRate = parseInt(el.lowRigSlider.value, 10) || 0;
+                    syncAdminPanelUI();
+                    saveState();
+                });
+
+                el.highRigSlider.addEventListener('input', () => {
+                    state.admin.highBetRigRate = parseInt(el.highRigSlider.value, 10) || 0;
+                    syncAdminPanelUI();
+                    saveState();
+                });
+
+                el.scatterRateSlider.addEventListener('input', () => {
+                    state.admin.scatterRate = parseFloat(el.scatterRateSlider.value) || 0;
+                    syncAdminPanelUI();
+                    saveState();
+                });
+
+                el.adminSetBalBtn.addEventListener('click', () => {
+                    const val = parseInt(el.adminBalInput.value, 10);
+                    if (!Number.isFinite(val) || val < 0) return;
+                    state.balance = val;
+                    syncAdminPanelUI();
+                    renderUI();
+                    saveState();
+                    showToast(`👑 Đã đặt số dư thành ${formatVND(state.balance)}`, 'info', 2000);
+                });
+
+                el.adminAdd10M.addEventListener('click', () => {
+                    state.balance += 10_000_000;
+                    syncAdminPanelUI();
+                    renderUI();
+                    saveState();
+                });
+
+                el.adminAdd100M.addEventListener('click', () => {
+                    state.balance += 100_000_000;
+                    syncAdminPanelUI();
+                    renderUI();
+                    saveState();
+                });
+
+                el.adminSetZero.addEventListener('click', () => {
+                    state.balance = 0;
+                    state.autoSpin = false;
+                    syncAdminPanelUI();
+                    renderUI();
+                    saveState();
+                    showToast('Đã reset về 0đ (Đóng menu để test nút Báo Nhà)', 'warn', 2200);
+                });
+
+                el.closeAdminTopBtn.addEventListener('click', closeAdminPanel);
+                el.hideAdminBtn.addEventListener('click', closeAdminPanel);
+
+                // Fake Bot Chat Drawer
+                el.toggleChatBtn.addEventListener('click', () => {
+                    state.chatOpen = !state.chatOpen;
+                    el.chatDrawer.classList.toggle('hidden', !state.chatOpen);
+                    el.chatChevron.style.transform = state.chatOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+                    if (state.chatOpen) {
+                        el.chatUnreadDot.classList.add('hidden');
+                        el.chatMessages.scrollTop = el.chatMessages.scrollHeight;
+                    }
+                });
+
+                el.chatForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const txt = el.chatInput.value.trim();
+                    if (!txt) return;
+                    appendChat('Bạn (VIP)', txt, true);
+                    el.chatInput.value = '';
+                });
+            }
+
+            // Boot on Window Load
+            window.onload = function () {
+                loadState();
+                buildBetPills();
+                buildPaytableModal();
+                renderAllReels(state.grid);
+                bindEvents();
+                renderUI();
+                initSnowCanvas();
+                startAmbientLoops();
+            };
+        })();
+    </script>
+</body>
+</html>
